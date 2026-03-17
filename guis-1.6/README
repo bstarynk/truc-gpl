@@ -1,0 +1,38 @@
+Guis is a widget server. See the included guisdoc.html file or
+guisdoc.ps postscript file.
+
+Guis listen on a pipe for Python requests (using Pygtk) which build
+and manage widgets, etc.. and send textual replies (or events) lines
+to an application. Guis is useful for programs which want to delegate
+the user interface to another process. Since Guis is programmable, the
+communication (between Guis and its application) can be reduced to
+high level application specific messages.
+
+
+Look on {http://www.starynkevitch.net/Basile/guisdoc.html} for the
+latest version. Also see on freshmeat.
+
+You need gtk2 python2 and pygtk to compile and use it.
+ 
+
+### this release
+
+1.5 may 2004
+1.2 (august 31 2003) minor fixes: added {\tt xml\_coded} and better
+documentation
+
+1.1 (august 30 2003) major stuff: use Python & PyGtk
+
+### past releases
+
+O.3 compiles for gtk2.2 (march 2003) using lua
+
+O.2
+
+0.1 is the first on august 27th 2002
+
+Basile STARYNKEVITCH
+http://www.starynkevitch.net/Basile/ 
+basile@starynkevitch.net
+
+release $ReleaseVersion: 1.6 $

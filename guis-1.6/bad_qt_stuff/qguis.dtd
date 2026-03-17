@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!-- $Id: qguis.dtd 1.1 Sun, 31 Aug 2003 02:17:59 +0200 basile $ -->
+
+<!-- widget definitions --> 
+<!ENTITY % widgetdef "(label|hbox|vbox|menubar)">
+
+<!-- common widget attributes -->
+<!ENTITY % widget_attrs "
+  parent CDATA #IMPLIED	<!-- name of parent widget -->
+  name CDATA #IMPLIED <!-- name of current widget -->
+  show CDATA #IMPLIED <!-- 0 or 1 (to show the widget) -->
+  tip CDATA #IMPLIED <!-- tip for the widget -->
+  caption CDATA #IMPLIED <!-- caption title for the widget -->
+">
+
+<!-- qt3 rich text markup (approximated by ANY) -->
+<!ENTITY % qtrichtext "ANY">
+
+<!-- label widget -->
+<!ELEMENT label %qtrichtext;>
+<ATTLIST label
+  %widget_attrs;
+>
+
+<!-- attributes for boxes -->
+<!ENTITY % box_attrs "
+  spacing CDATA #IMPLIED <!-- integer -->
+  margin CDATA #IMPLIED	<!-- integer -->
+">
+
+<!-- horizontal box widget -->
+<!ELEMENT hbox (%widgetdef;*)>
+<!ATTLIST hbox
+  %widget_attrs;
+  %box_attrs;
+>
+
+<!--  vertical box widget -->
+<!ELEMENT vbox (%widgetdef;*)>
+<!ATTLIST vbox
+  %widget_attrs;
+  %box_attrs;
+>
+
+<!-- set a label text -->
+<!ELEMENT set_label %qtrichtext;>
+<!ATTLIST set_label
+  of CNAME #REQUIRED <!-- name of label to set -->
+>
+
+<!-- set tip text of any widget-->
+<!ELEMENT set_tip %qtrichtext;>
+<!ATTLIST set_tip
+  of CNAME #REQUIRED <!-- name of widget to be tipped -->
+>
+
+<!-- a menu bar (or the menubar of a main window) -->
+<!ELEMENT menubar (menuitem*)> 
+<!ATTLIST menubar
+   %widget_attrs;
+>
+<!-- eof $Id: qguis.dtd 1.1 Sun, 31 Aug 2003 02:17:59 +0200 basile $ -->

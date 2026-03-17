@@ -1,0 +1,160 @@
+\" $Format: ".TH pyguis 1 \"GUIS widget server\" \"$ReleaseVersion$ - $Date$\""$
+.TH pyguis 1 "GUIS widget server" "1.6 - Tue, 02 Sep 2003 21:30:28 +0200"
+.SH NAME
+.LP
+pyguis \- a Python GUI widget server
+.LP
+ruguis \- a Ruby GUI widget server
+.LP
+pyguis-scripter \- to run a script
+.LP
+ruguis-scripter \- to run a script
+.sp
+.SH SYNOPSIS
+.LP
+pyguis [\fB-i\fP \fIinputchan\fP] [\fB-o\fP \fIoutputchan\fP] 
+[\fB-s\fP \fIinitialscript\fP] 
+[\fB-p\fP \fIpipecommand\fP] #without any input or output chan
+[\fB-h\fP] #help
+[\fB-L\fP \fIlogfile\fP] 
+[\fI ..other gtk arguments.. \fP] 
+[\fB-T\fP] #show trace window
+[\fB-D\fP] #debug (huge) output -if not disabled at compile time
+.LP
+ruguis ... #like above for Ruby
+.LP
+pyguis-scripter \fIinitialscript\fP [\fB-i\fP \fIinputchan\fP] 
+[\fB-o\fP \fIoutputchan\fP]  
+[\fB-p\fP \fIpipecommand\fP] [\fB-T\fP] [\fB-D\fP] [\fI ..other gtk arguments.. \fP]
+.LP
+ruguis-scripter #like above for Ruby
+
+.SH DESCRIPTION
+
+\fBpyguis\fP is a GTK2 graphic user interface "server" which interpret
+requests (terminated by a double-newline or a formfeed) in Python
+and send replies to an applications.  the guis Python module
+provides the primitives to exchange with the client application,
+eg send replies, etc..; an initial Python script may be used to
+initialise \fBpyguis\fP  (eg define functions, make widgets, ...).
+\fBpyguis\fP requires the pygtk (>= 1.99.18) Python binding to GTK2.
+
+\fBruguis\fP is an experimental port to Ruby, using the Ruby-Gnome2
+Ruby binding to GTK2.
+
+.SH "OPTIONS"
+.LP 
+.TP 
+\fB\-i\fR \fIinput channel\fP 
+Gets input Python requests (terminated
+by double-newline or formfeed) from this channel. A channel is a file
+name (usually a FIFO), or a file descriptor number (if it contains
+only digits). So \fB-i /path/to/fifo\fP get inputs from the file
+/path/to/fifo while \fB-i 0\fP read input from stdin (fd0). If the
+input channel is a single dash i.e. \fB-\fP then stdin is taken as the
+input channel.  Don't use \fB-i\fP when giving a pipe command thru
+\fB-p\fP
+
+.TP
+\fB\-s\fR \fIinitial script\fP 
+Make the Python interpreter load the initial script file. If the first
+argument (argv[0]) ends with \fB-scripter\fP then the second argument
+is the initial script. Hence, pyguis scripts might start with the
+magic line \fF#!  /usr/bin/env pyguis-scripter\fP provided that
+pyguis-scripter exist in your path (e.g. as a symbolic link to
+pyguis).
+
+.TP 
+\fB\-o\fR \fIoutput channel\fP
+Send (newline terminated) output replied to this channel. A channel is
+a file name (usually a FIFO), or a file descriptor number (if it
+contains only digits). So \fB-o /path/to/fifo\fP send output to file
+/path/to/fifo while \fB-o 1\fP send output to stdout (fd1). Don't use
+\fB-o\fP when giving a pipe command thru \fB-p\fP, and don't send
+output to stderr. If the output channel is a single dash i.e. \fB-\fP
+then stdout is taken as the output channel.
+
+.TP 
+\fB\-p\fR \fIpiped command\fP
+Fork the specified command and read python requests from its stdout
+and send replies to its stdin. (Don't use this option with \fB-i\fR or
+\fB-o\fR). If the command name contain no spaces, it is just forked
+and execvp(3)-ed, otherwise a shell (your $SHELL or else /bin/sh) is
+forked (with -c) to execute it.
+
+.TP 
+\fB\-T\fR 
+Open a window for tracing the protocol (both requests & replies). You
+can enable or disable tracing (and debugging messages) thru menus. The
+GGUIS_TRACE environment variable may also be used (set it to 1 or
+clear it to 0).
+
+.TP 
+\fB\-D\fR 
+Output lots of debug information on stderr.  Debug may be
+disabled at compile time thru the -DNDEBUG compile flag. The
+GGUIS_DEBUG environment variable may also be used (set it to 1 or
+clear it to 0)
+
+.TP 
+\fB\-L\fR \fIlogfile\fP
+Write to the given \fIlogfile\fP every request just before it is
+interpreted (and flush the logfile at every request).
+
+.TP 
+\fB\-v\fR 
+version info
+.TP 
+\fB\-h\fR 
+help message
+
+.TP 
+Usual GTK arguments are also accepted.
+
+.SH DETAILS
+
+.LP
+See pygtk and GTK documentation for GTK2 and it bindings in
+Python. This program should probably be compiled and used without any
+thread support in Python (or GTK).
+
+.LP
+This program add a small \fBguis\fP module to Python, which provides
+notably the \fBraw_send\fP primitive (which sends it argument -a
+string- back thru the output channel). The \fBto_send\fP primitive
+convert Python strings and numbers to a sendable representation, or
+try to use a \fBto_send\fP attribute or method otherwise. The
+\fBend_of_input_hook\fP primitive gets or sets the callable hook (called at end
+of input). The \fBend_timeout\fP primitives gets or sets the end timeout
+(in milliseconds) - delay after which pyguis exits after end of input.
+
+.LP
+There are no default for input or output channels. You always need to
+specify both \fB-i\fP and \fB-o\fP (in slave mode, when the
+application start pyguis) or the \fB-p\fP piped command (in master
+mode, when pyguis starts your application).
+
+
+.LP
+An experimental port to Ruby is available since version 1.3; Use the
+\fBruguis\fP command or \fBruguis-scripter\fP trick.
+
+.SH "SEE ALSO"
+.LP
+python(1), the python site on http://www.python.org/ the GTK site on
+http://www.gtk.org/ and the pygtk page on
+http://www.daa.com.au/~james/pygtk/ and look for updates on pyguis
+either on http://freshmeat.net/projects/guis or on
+http://starynkevitch.net/Basile/guisintro.html
+.LP
+ruby(1), the ruby site on http://www.ruby-lang.org/ and the Gnome2
+(hence Gtk2) binding on http://ruby-gnome2.sourceforge.jp/
+
+.SH "AUTHOR"
+Basile STARYNKEVITCH wrote guis and this man page. pyguis is free
+opensource software under Gnu GPL license. This man page can be reused
+freely. Please send comments, patches, suggestions, by email to
+<basile@starynkevitch.net> mentioning Guis in the subject.
+
+
+\" eof $Id: pyguis.man 1.4 Tue, 02 Sep 2003 21:30:28 +0200 basile $

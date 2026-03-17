@@ -1,0 +1,83 @@
+#! /usr/bin/env ruguis-scripter
+# -*- ruby -*-
+# $Id: guisbench_ruscript 1.1 Wed, 19 May 2004 11:15:44 +0200 basile $require 'gtk2'
+
+# mandatory
+Gtk.init
+
+def end_cb()
+  Guis::guis_send("END")
+end
+
+def askadd(x,y)
+  $stderr.printf("askadd %d %d\n", x, y)
+  msg = ("ADD \"" + x.to_s + "\" \"" + y.to_s + "\"")
+  $stderr.printf("sending msg %s\n", msg)
+  $stderr.flush
+  Guis::guis_send(msg)
+end
+
+def start(welcomsg)
+  $stderr.printf("start %s\n", welcomsg)
+  $window = Gtk::Window.new
+  $window.set_title("Guis Demo")
+  vbox = Gtk::VBox.new(false,0)
+  $window.add(vbox)
+  $window.signal_connect("destroy")  do 
+    end_cb
+  end
+  $window.border_width = 10
+  label = Gtk::Label.new()
+  label.set_markup("<b>Guis demo</b>\n" + welcomsg.to_xml)
+  vbox.add(label)
+  ## sum label
+  $sumlab = Gtk::Label.new()
+  vbox.add($sumlab)
+  ## scrolledwinow
+  scrwin = Gtk::ScrolledWindow.new()
+  vbox.add(scrwin)
+  scrwin.border_width = 10
+  table = Gtk::Table.new(50,50,false)
+  table.row_spacings= 10
+  table.column_spacings= 10
+  scrwin.add_with_viewport(table)
+  ## quit button
+  quitbut = Gtk::Button.new("quit")
+  quitbut.signal_connect("clicked") do
+    end_cb
+  end
+  vbox.add(quitbut)
+  50.times do |i| 
+    50.times do |j|
+      buf = "but. (%d,%d)" % [i,j]
+      mybut = Gtk::Button.new(buf)
+      table.attach(mybut,i,i+1,j,j+1)
+      mybut.signal_connect("clicked") do |but|
+        askadd(i,j)
+      end
+    end
+  end
+  $window.show_all
+end  
+
+def displaysum(x,y,sum)
+  $stderr.printf("displaysum %d %d %d\n", x,y,sum)
+  $sumlab.set_markup("<i>%d</i> + <i>%d</i> = <big>%d</big>" % [x,y,sum])
+end
+
+def displayerror(message)
+  $stderr.printf("displayerror %s\n", message)
+  $sumlab.set_markup("<b>ERROR:</b> " + message)
+end
+
+def stopdemo()
+  $stderr.printf("stopdemo\n")
+  $window.hide
+  $window.destroy
+end
+
+def Guis::end_of_input_hook()
+  $stderr.printf("end of input\n")
+end
+
+## eof $Id: guisbench_ruscript 1.1 Wed, 19 May 2004 11:15:44 +0200 basile $

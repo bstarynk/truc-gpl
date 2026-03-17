@@ -1,0 +1,920 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+            "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML>
+<HEAD><TITLE>GUIS - a GUI widget server 
+release 1.6 on Thu, 30 Dec 2004 14:14:05 +0100 
+prcsproj 1.62
+
+</TITLE>
+
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<META name="GENERATOR" content="hevea 1.07">
+</HEAD>
+<BODY >
+<!--HEVEA command line is: /usr/bin/hevea guisdoc.tex -->
+<!--HTMLHEAD-->
+<!--ENDHTML-->
+<!--PREFIX <ARG ></ARG>-->
+<!--CUT DEF section 1 -->
+
+
+<H1 ALIGN=center>GUIS - a GUI widget server<BR>
+<I>release 1.6 on Thu, 30 Dec 2004 14:14:05 +0100<BR>
+<FONT SIZE=1><TT>prcsproj 1.62
+</TT></FONT>
+</I></H1>
+
+<H3 ALIGN=center>Basile STARYNKEVITCH -- <A HREF="mailto:basile_NOSPAM@starynkevitch.net.invalid">basile_NOSPAM@starynkevitch.net.invalid</A><BR>
+<A HREF="http://www.starynkevitch.net/Basile/index_en.html"><TT>http://www.starynkevitch.net/Basile/index_en.html</TT></A><BR>
+8, rue de la Faïencerie, 92340 Bourg La Reine, France</H3>
+<!--TOC section Table of Contents-->
+
+<H2>Table of Contents</H2><!--SEC END -->
+
+<UL><LI>
+<A HREF="#htoc1">1&nbsp;&nbsp;Overview and usage</A>
+<UL><LI>
+<A HREF="#htoc2">1.1&nbsp;&nbsp;Motivations and related stuff</A>
+<LI><A HREF="#htoc3">1.2&nbsp;&nbsp;Introduction</A>
+<UL><LI>
+<A HREF="#htoc4">1.2.1&nbsp;&nbsp;callbacks</A>
+<LI><A HREF="#htoc5">1.2.2&nbsp;&nbsp;initial script</A>
+<LI><A HREF="#htoc6">1.2.3&nbsp;&nbsp;protocols</A>
+<LI><A HREF="#htoc7">1.2.4&nbsp;&nbsp;other toolkits (Qt3)?</A>
+</UL>
+<LI><A HREF="#htoc8">1.3&nbsp;&nbsp;Small example</A>
+<UL><LI>
+<A HREF="#htoc9">1.3.1&nbsp;&nbsp;protocols</A>
+<LI><A HREF="#htoc10">1.3.2&nbsp;&nbsp;initial Python script</A>
+<LI><A HREF="#htoc11">1.3.3&nbsp;&nbsp;client application</A>
+</UL>
+</UL>
+<LI><A HREF="#htoc12">2&nbsp;&nbsp;Reference</A>
+<UL><LI>
+<A HREF="#htoc13">2.1&nbsp;&nbsp;installing Guis</A>
+<LI><A HREF="#htoc14">2.2&nbsp;&nbsp;invoking Guis</A>
+</UL>
+<LI><A HREF="#htoc15">3&nbsp;&nbsp;Guis for Python</A>
+<UL><LI>
+<A HREF="#htoc16">3.1&nbsp;&nbsp;invocation</A>
+<UL><LI>
+<A HREF="#htoc17">3.1.1&nbsp;&nbsp;added Python primitives</A>
+<LI><A HREF="#htoc18">3.1.2&nbsp;&nbsp;end_of_input_hook</A>
+<LI><A HREF="#htoc19">3.1.3&nbsp;&nbsp;end_timeout</A>
+<LI><A HREF="#htoc20">3.1.4&nbsp;&nbsp;guis_send</A>
+<LI><A HREF="#htoc21">3.1.5&nbsp;&nbsp;main_loop_in_script</A>
+<LI><A HREF="#htoc22">3.1.6&nbsp;&nbsp;nb_replies</A>
+<LI><A HREF="#htoc23">3.1.7&nbsp;&nbsp;nb_requests</A>
+<LI><A HREF="#htoc24">3.1.8&nbsp;&nbsp;pipe_check_period</A>
+<LI><A HREF="#htoc25">3.1.9&nbsp;&nbsp;to_guis</A>
+<LI><A HREF="#htoc26">3.1.10&nbsp;&nbsp;xml_coded</A>
+</UL>
+</UL>
+<LI><A HREF="#htoc27">4&nbsp;&nbsp;Guis with Ruby</A>
+<UL><LI>
+<A HREF="#htoc28">4.1&nbsp;&nbsp;open questions</A>
+<LI><A HREF="#htoc29">4.2&nbsp;&nbsp;Ruby API</A>
+</UL>
+<LI><A HREF="#htoc30">5&nbsp;&nbsp;experimental and incomplete Slang version of GUIS using slgtk</A>
+<LI><A HREF="#htoc31">6&nbsp;&nbsp;Feedback</A>
+<UL><LI>
+<A HREF="#htoc32">6.1&nbsp;&nbsp;Feedback welcome</A>
+<LI><A HREF="#htoc33">6.2&nbsp;&nbsp;Change log</A>
+</UL>
+</UL>
+<BR>
+<DIV ALIGN=center>
+<TABLE BORDER=1 CELLSPACING=0 CELLPADDING=1>
+<TR><TD ALIGN=center NOWRAP COLSPAN=3><FONT SIZE=4>Software Description</FONT></TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP><B>Name</B></TD>
+<TD ALIGN=left NOWRAP>GUIS</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP><B>License</B></TD>
+<TD ALIGN=left NOWRAP>GNU General Public License</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP><B>Author</B></TD>
+<TD ALIGN=left NOWRAP>Basile <FONT COLOR=navy>Starynkevitch</FONT></TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP><B>Version</B></TD>
+<TD ALIGN=left NOWRAP>1.6</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP><B>Development system</B></TD>
+<TD ALIGN=left NOWRAP>Linux/Debian/Sid x86</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP><B>Programming Language</B></TD>
+<TD ALIGN=left NOWRAP>C</TD>
+</TR>
+<TR><TD ALIGN=center NOWRAP COLSPAN=3><FONT SIZE=4>Software Dependencies</FONT></TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP>GTK 2.4 (or 2.2)</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP>and related libraries</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP>(Glib, Pango, Atk)</TD>
+<TD ALIGN=left NOWRAP>required</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP>Python 2.3 (or 2.2)</TD>
+<TD ALIGN=left NOWRAP>recommended</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP>PyGTK 2.2</TD>
+<TD ALIGN=left NOWRAP>recommended</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP>Ruby 1.8</TD>
+<TD ALIGN=left NOWRAP>recommended</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP>Ryby-Gnome2 0.11.x</TD>
+<TD ALIGN=left NOWRAP>recommended</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP>Slang 1.4.x</TD>
+<TD ALIGN=left NOWRAP>optional</TD>
+</TR>
+<TR><TD ALIGN=right NOWRAP>Slgtk 0.5.x</TD>
+<TD ALIGN=left NOWRAP>optional</TD>
+</TR></TABLE>
+</DIV><BR>
+Please be nice to send me (<A HREF="mailto:basile@starynkevitch.net">basile@starynkevitch.net</A>) an email
+if you use this information and this Guis software.<BR>
+<BR>
+Guis is available (as a gnuzipped source tarball) from
+<A HREF="http://www.starynkevitch.net/Basile/guis-1.6.tar.gz"><TT>http://www.starynkevitch.net/Basile/guis-1.6.tar.gz</TT></A>
+and this document is on
+<A HREF="http://www.starynkevitch.net/Basile/guisdoc.html"><TT>http://www.starynkevitch.net/Basile/guisdoc.html</TT></A>. See also my
+home page on <A HREF="http://www.starynkevitch.net/Basile/"><TT>http://www.starynkevitch.net/Basile/</TT></A> or Guis page
+<A HREF="http://freshmeat.net/projects/guis/"><TT>http://freshmeat.net/projects/guis/</TT></A> on Freshmeat for
+announcement of newer versions. Please feel free to send suggestions,
+patches, criticisms, etc...<BR>
+<BR>
+<!--TOC section Overview and usage-->
+
+<H2><A NAME="htoc1">1</A>&nbsp;&nbsp;Overview and usage</H2><!--SEC END -->
+
+This section gives a short overview with the classical adder example.
+Then the usage details are given.<BR>
+<BR>
+<!--TOC subsection Motivations and related stuff-->
+
+<H3><A NAME="htoc2">1.1</A>&nbsp;&nbsp;Motivations and related stuff</H3><!--SEC END -->
+
+<EM>Guis</EM> is a small widget server. It is a gtk2 (see
+<A HREF="http://www.gtk.org/"><TT>http://www.gtk.org/</TT></A>) based program listening on a pipe for
+widget requests (requests are Python [or Ruby] scripts - see
+<A HREF="http://www.python.org/"><TT>http://www.python.org/</TT></A> using the PyGTK 2.0 binding of GTK2 to Python
+- see <A HREF="http://www.daa.com.au/~james/software/pygtk/"><TT>http://www.daa.com.au/~james/software/pygtk/</TT></A>) and
+outputting events or replies <EM>Guis</EM> is useful for programs (in particular, setuid programs or (ruby,ocaml,perl...) scripts)
+which do not want to link in a full widget toolkit but prefer to
+delegate the user interface to another process.<BR>
+<BR>
+The choice of the scripting language is not critical provided it does
+have a full Gtk2 binding. Porting Guis to another scripting language
+should be easy.<BR>
+<BR>
+(Many years ago, I was a satisfied user of Sun OpenWindows
+ system with its programmable NeWS [widget] server. I still miss that
+ widget server (see a message I posted in october 1993 on
+ <A HREF="http://www.zendo.com/vsta/mail/1/0146.html"><TT>http://www.zendo.com/vsta/mail/1/0146.html</TT></A> which is copied on
+ <A HREF="http://starynkevitch.net/Basile/NeWS_descr_oct_1993.html"><TT>http://starynkevitch.net/Basile/NeWS_descr_oct_1993.html</TT></A>) I don't
+ understead why the NeWS team, which also probably designed Java, did
+ not consider to embed the JVM inside the X11 server, as a standard
+ X11 extension, and embedding a toolkit inside Java, like Swing does,
+ is not an answer.)<BR>
+<BR>
+A similar project is <EM>entity</EM> - see <A HREF="http://www.entity.cx/"><TT>http://www.entity.cx/</TT></A>.
+The major difference between <EM>entity</EM> and <EM>guis</EM> is that <EM>guis</EM> is a server (listening for orders on a pipe...) while <EM>entity</EM> is a script engine.<BR>
+<BR>
+The IRAF widget server - see
+<A HREF="http://iraf.noao.edu/iraf/web/projects/x11iraf/"><TT>http://iraf.noao.edu/iraf/web/projects/x11iraf/</TT></A> had similar goals.
+And PicoGui <A HREF="http://picogui.org/"><TT>http://picogui.org/</TT></A> is also server based.<BR>
+<BR>
+The XUL system of mozilla (see <A HREF="http://www.xulplanet.com/"><TT>http://www.xulplanet.com/</TT></A>) also
+describes an interface with XML.<BR>
+<BR>
+The (previously Berlin, now) Fresco server should be a corba server
+for widgets - which seems nearly dormant. see
+<A HREF="http://www.fresco.org/"><TT>http://www.fresco.org/</TT></A><BR>
+<BR>
+<!--TOC subsection Introduction-->
+
+<H3><A NAME="htoc3">1.2</A>&nbsp;&nbsp;Introduction</H3><!--SEC END -->
+
+<EM>Guis</EM> is a graphical user interface program communication with a
+client application (using separate protocols). The application send
+widget building requests to <EM>Guis</EM> (so these requests are input
+for <EM>Guis</EM>) and handles widget events sent from <EM>Guis</EM>.
+Usually Guis is started with a small Python initial script which
+defines common functions and build some widgets. The requests are
+Python source code chunks. The replies (i.e. events sent back from
+<EM>Guis</EM> to the application) are just some textual lines sent (by
+some Python code calling <TT>guis_send</TT>).<BR>
+<BR>
+Actually, <EM>Guis</EM> is strongly dependent on GTK2, and depends less
+of Python. The code is designed to make <EM>Guis</EM> easily
+portable<SUP><A NAME="text1" HREF="#note1">1</A></SUP>
+to any other scripting interpreter able to evaluate requests in
+textual strings, provided this interpreter has a binding to GTK2. The
+only reason I use Python here is the availability of a nearly complete
+binding of Python to GTK2. (I would prefer some other scripting
+languages). To remind that <EM>Guis</EM> is using Python its binary is
+called <TT>pyguis</TT>.<BR>
+<BR>
+Since version 1.3, <EM>Guis</EM> is also interfaced to Ruby. See section
+<A HREF="#sec:rubyport">4</A> below.<BR>
+<BR>
+<!--TOC subsubsection callbacks-->
+
+<H4><A NAME="htoc4">1.2.1</A>&nbsp;&nbsp;callbacks</H4><!--SEC END -->
+
+The initial script (or the application) is responsible for installing
+appropriate callbacks with the <B>connect</B> primitive (or equivalent)
+of the scripting language (Python or Ruby). <BR>
+<BR>
+<FONT SIZE=5>IMPORTANT</FONT>
+Callbacks in Guis should be robust: <B>callbacks cannot raise
+ uncaught exceptions</B> (because they are run by the <TT>gtk_main_loop</TT> in <EM>Guis</EM>, outside of the (Python or Ruby...)
+interpreter. Applications should encapsulate callbacks with the
+appropriate mechanism (catch ... ) in the scripts.<BR>
+<BR>
+<!--TOC subsubsection initial script-->
+
+<H4><A NAME="htoc5">1.2.2</A>&nbsp;&nbsp;initial script</H4><!--SEC END -->
+
+Usually, <EM>Guis</EM> runs an initial script (in Python or Ruby) which
+is interpreted by the scripting language before entering the <TT>gtk_main_loop</TT>. This initial script usually builds the widget and
+defines some application specific functions (to implement the protocol
+specific to your application).<BR>
+<BR>
+The initial script is run once. It is specified with the <TT>-s</TT>
+option or with the <TT>-scripter</TT> trick. See below <A HREF="#invocation">2.2</A>
+and the man page.<BR>
+<BR>
+You might (if possible) end your initial script with a call to <TT>gtk_main_loop</TT> as provided by the (Python or Ruby) GTK2 binding.
+Calling it will make the request evaluation better under control and
+might permit exceptions in callbacks (see your documentation of the
+GTK binding you are using). Then you have to exit explicitly <EM>Guis</EM> (by calling the <TT>exit</TT> primitive of Python or Ruby) or
+ tell <EM>Guis</EM> (using <CODE><TT>guis_main_loop_in_script</TT></CODE>)
+ that you call the main loop.<BR>
+<BR>
+I still strongly advise against uncaught exceptions in callbacks.<BR>
+<BR>
+<!--TOC subsubsection protocols-->
+
+<H4><A NAME="htoc6">1.2.3</A>&nbsp;&nbsp;protocols</H4><!--SEC END -->
+
+Every request sent from the application to <EM>Guis</EM> should end with
+two consecutive newline<SUP><A NAME="text2" HREF="#note2">2</A></SUP> characters coded in C as <CODE><TT>\n\n</TT></CODE> or
+with a formfeed (coded in C as <CODE><TT>\f</TT></CODE>, decimal 12).<BR>
+<BR>
+Obviously requests cannot contain (inside) a double newline which is a
+convention suitable for most scripting languages (including Python,
+Ruby, Ocaml, Lua, Rep-Lisp, Slang, ...).<BR>
+<BR>
+A convenient way to debug <EM>Guis</EM> initial scripts is to run <TT>pyguis</TT> with an explicit FIFO input: make it with <TT>mkfifo
+ /tmp/fifo</TT> and then run <TT>pyguis -s yourscript -i /tmp/fifo -o
+ -</TT>; in another xterm, run <TT>cat &gt;&gt; /tmp/fifo</TT> and don't forget to
+end every request with a double newline (ie return) character.<BR>
+<BR>
+Events or replies sent from <EM>Guis</EM> to the application are single
+lines (maybe very long) ended with a newline. They should not contain
+any control character (eg newline or formfeed) inside. Requests and
+replies are asynchronous (a request can be sent without any replies
+and vice versa).<BR>
+<BR>
+The driving idea of <EM>Guis</EM> is that the input and output protocols are
+tailored to your application. On the input side (requests from
+your application to <EM>Guis</EM>) the protocol is usually made of calls
+to specific functions defined in the initial script. On the output
+side (replies or events from <EM>Guis</EM> to your application) the
+protocol is defined by sending (thru an appropriate primitive, usually
+<TT>guis_send</TT>, of the scripting language) arbitrary lines to your
+application from callbacks.<BR>
+<BR>
+<!--TOC subsubsection other toolkits (Qt3)?-->
+
+<H4><A NAME="htoc7">1.2.4</A>&nbsp;&nbsp;other toolkits (Qt3)?</H4><!--SEC END -->
+
+It would be interesting to have a similar approach with QT3. I tried,
+and leave some (bad, incomplete, not even compilable) C++ code under
+the <TT>bad_qt_stuff/</TT> directory of this <EM>Guis</EM>. Feel free to
+reuse this code (under a GNU license). My main problem was lack of
+good binding to QT3 and threading problems (notably threads are nearly
+incompatible with an embedded Python).
+<!--TOC subsection Small example-->
+
+<H3><A NAME="htoc8">1.3</A>&nbsp;&nbsp;Small example</H3><!--SEC END -->
+
+For illustration purpose, suppose we have an application which
+computes the sum of 2 integers, and we want to give it a nice
+graphical interface containing two (editable) textual entry widgets, a
+quit button, and a label widget displaying the sum.
+<BLOCKQUOTE><DIV ALIGN=center><HR WIDTH="80%" SIZE=2></DIV>
+<DIV ALIGN=center>
+<IMG SRC="imgdemo.jpeg">
+<BR>
+<DIV ALIGN=center>Figure 1: Simple example demo window</DIV><BR>
+
+</DIV>
+<DIV ALIGN=center><HR WIDTH="80%" SIZE=2></DIV></BLOCKQUOTE>
+<!--TOC subsubsection protocols-->
+
+<H4><A NAME="htoc9">1.3.1</A>&nbsp;&nbsp;protocols</H4><!--SEC END -->
+
+We have to think first about the messages sent from the application to
+<EM>Guis</EM>. We need first to <TT>start</TT> the interface (giving some
+nice title). We will need to display a sum using <TT>displaysum</TT> and
+to display an error message using <TT>displayerror</TT>. And
+we need to stop the demo, thru a <TT>stopdemo</TT> function. All these
+functions are Python functions defined in the initial script file.<BR>
+<BR>
+We also need to define the messages sent from <EM>Guis</EM> back to the
+application. We will send a plain <TT>END</TT> for end, and a more
+complex message starting with <TT>ADD</TT> to ask the application to make
+an addition (displaying the result with a <TT>displaysum</TT> request.
+The <TT>ADD</TT> message should contain the textual content of the two
+entry widgets. Since the textual content can be anything (it could
+even contain control characters like newlines) it should be encoded.
+We use a C like encoding convention, so will usually send <TT>ADD "1"
+ "3"</TT> -or even <CODE><TT>ADD "\t1" "3"</TT></CODE> if the first entry starts
+with a tab<SUP><A NAME="text3" HREF="#note3">3</A></SUP>. The application is in
+charge of checking that the entries contain valid numbers.<BR>
+<BR>
+The <EM>Guis</EM> server program buffers all input (python requests) and
+output (event replies), reading and writing as soon as possible.<BR>
+<BR>
+A typical exchange between the application and Guis might be as
+follow; first the application starts and sends
+<BLOCKQUOTE><FONT COLOR=purple>
+<TT>
+</TT></FONT><CODE><FONT COLOR=purple><TT>start("pid 1234")</TT></FONT></CODE><FONT COLOR=purple><TT>
+</TT></FONT></BLOCKQUOTE>
+Then <EM>Guis</EM> shows the window and let the user interact with it. Some
+user interaction makes <EM>Guis</EM> send back messages like
+<BLOCKQUOTE><FONT COLOR=blue><TT>
+ADD "2" "5"
+</TT></FONT></BLOCKQUOTE>
+To which the application responds with
+<BLOCKQUOTE><FONT COLOR=purple>
+<TT>
+</TT></FONT><CODE><FONT COLOR=purple><TT>displaysum(2,5,7)</TT></FONT></CODE><FONT COLOR=purple><TT>
+</TT></FONT></BLOCKQUOTE>
+When the user closes the window, <EM>Guis</EM> send back 
+<BLOCKQUOTE><FONT COLOR=blue><TT>
+END
+</TT></FONT></BLOCKQUOTE>
+To which the application responds with
+<BLOCKQUOTE><FONT COLOR=purple>
+<TT>
+stopdemo()
+</TT></FONT></BLOCKQUOTE>
+and then exits.<BR>
+<BR>
+When run with the <TT>-T</TT> flag, <EM>Guis</EM> opens a window to show the
+trace of all requests and replies (this is useful for script
+and application debugging):
+<BLOCKQUOTE><DIV ALIGN=center><HR WIDTH="80%" SIZE=2></DIV>
+<DIV ALIGN=center>
+<IMG SRC="imgtrace.jpeg">
+<BR>
+<DIV ALIGN=center>Figure 2: Protocol trace window</DIV><BR>
+
+</DIV>
+<DIV ALIGN=center><HR WIDTH="80%" SIZE=2></DIV></BLOCKQUOTE>
+<!--TOC subsubsection initial Python script-->
+
+<H4><A NAME="htoc10">1.3.2</A>&nbsp;&nbsp;initial Python script</H4><!--SEC END -->
+
+We write a small Python initial script. A special trick in <EM>Guis</EM>
+is that if <TT>Guis</TT> is invoked with a name (i.e. <TT>argv[0]</TT> in C
+parlance) ending with <TT>-scripter</TT> then the next (second) argument
+is the initial script name. Hence we can start our script with
+<BLOCKQUOTE><FONT COLOR=navy>
+<TT>
+</TT></FONT><CODE><FONT COLOR=navy><TT>#! /usr/bin/env pyguis-scripter</TT></FONT></CODE><FONT COLOR=navy><TT><BR>
+</TT></FONT><CODE><FONT COLOR=navy><TT># file guisdemo_script in -*- python -*-</TT></FONT></CODE><FONT COLOR=navy><TT>
+</TT></FONT></BLOCKQUOTE>
+With such a trick, our initial script can be invoked by any <TT>pyguis-scripter</TT> found in our <TT>$PATH</TT>. We make it a symbolic
+link to the <TT>pyguis</TT> executable.<BR>
+<BR>
+We need to tell python to use the <TT>gtk</TT> module (provided by pygtk)
+and the <TT>guis</TT> module (builtin inside <TT>pyguis</TT>).
+<BLOCKQUOTE><FONT COLOR=navy>
+<TT>
+</TT></FONT><CODE><FONT COLOR=navy><TT>import gtk</TT></FONT></CODE><FONT COLOR=navy><TT><BR>
+</TT></FONT><CODE><FONT COLOR=navy><TT>import guis</TT></FONT></CODE><FONT COLOR=navy><TT>
+</TT></FONT></BLOCKQUOTE>
+Next, we need to define a callback used by the <I>quit</I> button; it
+just sends back the <TT>END</TT> string to the application
+<BLOCKQUOTE><FONT COLOR=navy>
+</FONT><PRE><FONT COLOR=navy><TT>
+def end_cb(*args):
+    guis.guis_send("END")
+</TT></FONT></PRE></BLOCKQUOTE>
+We also define a callback used when text entries are updated. It uses
+the <TT>guis.to_guis</TT> primitive to convert a C string to its textual
+representation but we could have used Python <TT>repr</TT> function.<BR>
+<BR>
+We need to define the <TT>start</TT> function, invoked by the application
+in its first request, to build the graphical widgets and connect them
+to callbacks. It first builds a window and its contained vertical box
+(using GTK2 calls in Python):
+<BLOCKQUOTE><FONT COLOR=navy>
+</FONT><PRE><FONT COLOR=navy><TT>
+def start(welcomsg):
+    global window, xent, yent, sumlab
+    window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+    window.set_title("Guis Demo")
+    vbox = gtk.VBox(gtk.FALSE,2)
+    window.add(vbox)
+</TT></FONT></PRE></BLOCKQUOTE>
+Then it builds the other widgets (details deleted here, see the source
+of <TT>guisdemo_script</TT> file). At last, it makes the <I>quit</I>
+button, connect it to the <TT>end_cb</TT> callback, add it into <TT>vbox</TT> and show all of the <TT>window</TT>:
+<BLOCKQUOTE><FONT COLOR=navy>
+</FONT><PRE><FONT COLOR=navy><TT>
+    # ...
+    quitbut = gtk.Button("quit")
+    quitbut.connect("clicked", end_cb)
+    vbox.add(quitbut)
+    window.show_all()
+</TT></FONT></PRE></BLOCKQUOTE>
+We need to define the <TT>displaysum</TT> function
+<BLOCKQUOTE><FONT COLOR=navy>
+</FONT><PRE><FONT COLOR=navy><TT>
+def displaysum(x,y,sum):
+    sumlab.set_markup(('&lt;i&gt;%d&lt;/i&gt; + &lt;i&gt;%d&lt;/i&gt;' % (x,y))
+                       + (' = &lt;big&gt;%d&lt;/big&gt;' % sum))
+</TT></FONT></PRE></BLOCKQUOTE>
+We need to define the <TT>displayerror</TT> function. To avoid
+messing the Gtk2 (pango provided) XML-like markup, we convert the
+message to its XML representation (i.e. using <CODE><TT>&amp;lt;</TT></CODE>
+for <TT>&lt;</TT> etc...) using the <TT>guis.xml_coded</TT> primitive.
+<BLOCKQUOTE><FONT COLOR=navy>
+</FONT><PRE><FONT COLOR=navy><TT>
+def displayerror(message):
+    sumlab.set_markup('&lt;b&gt;ERROR:&lt;/b&gt; '
+                      + (guis.xml_coded(message)))
+</TT></FONT></PRE></BLOCKQUOTE>
+A <TT>stopdemo</TT> function is also needed (see the source file).<BR>
+<BR>
+<!--TOC subsubsection client application-->
+
+<H4><A NAME="htoc11">1.3.3</A>&nbsp;&nbsp;client application</H4><!--SEC END -->
+
+We suppose the client application is written in C. You can code it in
+any language able to communicate on channels in a textual way. We
+comment here parts of the file <TT>guisdemo_client.c</TT>. You don't need
+to link any <EM>Guis</EM> specific library to it!<BR>
+<BR>
+We declare a big line buffer, and the requests and replies files. We
+could also use the <TT>glibc</TT> specific <TT>getline</TT> function which
+dynamically allocates the line buffer.
+<BLOCKQUOTE><FONT COLOR=green>
+</FONT><PRE><FONT COLOR=green><TT>
+  char linbuf[1024];
+  FILE *toguis = stdout;
+  FILE *fromguis = stdin;
+</TT></FONT></PRE></BLOCKQUOTE>
+At first, we want to send a request like
+<CODE><TT>start("&lt;b&gt;guis&lt;/b&gt; demo")</TT></CODE>. Requests may start with a
+comment used to help identify them in error messages<SUP><A NAME="text4" HREF="#note4">4</A></SUP>. 
+<BLOCKQUOTE><FONT COLOR=green>
+</FONT><PRE><FONT COLOR=green><TT>
+  fprintf (toguis, "#initial start\n"
+           "start(\"pid %d\")\n\n",
+           (int) getpid ());
+  fflush (toguis);
+</TT></FONT></PRE></BLOCKQUOTE>
+Never forget to flush your request channel very often, and to end
+every request with two newlines.<BR>
+<BR>
+Of course we need a loop to read events (or replies) messages from
+<EM>Guis</EM> - each of them is a single (sometimes very long) line ended
+with a single newline.
+<BLOCKQUOTE><FONT COLOR=green>
+</FONT><PRE><FONT COLOR=green><TT>
+  while (!feof (fromguis)) {
+    fgets (linbuf, sizeof (linbuf) - 1, fromguis);
+</TT></FONT></PRE></BLOCKQUOTE>
+if the reply line starts with <TT>ADD</TT> we scan it appropriately and ask
+to display a fancy line like ``<I>2</I> + <I>3</I> = <FONT SIZE=4>5</FONT>''
+otherwise (bad scan because of non-numeric entries) we display
+``<B>invalid input</B>''
+<BLOCKQUOTE><FONT COLOR=green>
+</FONT><PRE><FONT COLOR=green><TT>
+    if (!strncmp (linbuf, "ADD", 3)) {
+      int x=0,  y=0,  pos=0;
+      if (sscanf (linbuf, "ADD \"%d\" \"%d\" %n", 
+                  &amp;x, &amp;y, &amp;pos) &gt; 0 &amp;&amp; pos &gt; 0) {
+        fprintf (toguis, "#good sum\n"
+                 "displaysum(%d,%d,%d)\n\n",
+                 x, y, x + y);
+      } else {
+        fprintf (toguis, "#bad input\n"
+                 "displayerror(\"bad input\")\n\n");
+      }
+</TT></FONT></PRE></BLOCKQUOTE>
+If the reply is <TT>END</TT> we stop gently (by sending a <TT>stopdemo()</TT>
+request and exiting): 
+<BLOCKQUOTE><FONT COLOR=green>
+</FONT><PRE><FONT COLOR=green><TT>
+    } else if (!strncmp (linbuf, "END", 3)) {
+      fprintf (toguis, "#stop\n" "stopdemo()\n\n");
+      fflush (toguis);
+      sleep (1);
+      exit (0);
+    } 
+</TT></FONT></PRE></BLOCKQUOTE>
+After warning against unexpected input lines, we flush the request
+channel and end the loop.
+<BLOCKQUOTE><FONT COLOR=green>
+</FONT><PRE><FONT COLOR=green><TT>
+    fflush (toguis);
+  }; // end of while feof
+</TT></FONT></PRE></BLOCKQUOTE>
+Normally the while loop should never be ended, since our guis python
+script should signal termination with <TT>END</TT> (handled above).<BR>
+<BR>
+<!--TOC section Reference-->
+
+<H2><A NAME="htoc12">2</A>&nbsp;&nbsp;Reference</H2><!--SEC END -->
+
+<!--TOC subsection installing Guis-->
+
+<H3><A NAME="htoc13">2.1</A>&nbsp;&nbsp;installing Guis</H3><!--SEC END -->
+
+You need Python (2.2.x or 2.3.y from <A HREF="http://www.python.org/"><TT>http://www.python.org/</TT></A>),
+GTK (2.2 or better from <A HREF="http://www.gtk.org/"><TT>http://www.gtk.org/</TT></A>) and PyGTK (1.99.18
+or 2.0 or better from
+<A HREF="http://www.daa.com.au/~james/software/pygtk/"><TT>http://www.daa.com.au/~james/software/pygtk/</TT></A>) to build <TT>pyguis</TT> (the Python version of <EM>Guis</EM>). You need Ruby (1.8.x)
+from <A HREF="http://www.ruby-lang.org/"><TT>http://www.ruby-lang.org/</TT></A> and ruby-gnome 0.9.1 or later from
+<A HREF="http://ruby-gnome2.sourceforge.jp/"><TT>http://ruby-gnome2.sourceforge.jp/</TT></A> to build <TT>ruguis</TT> (the
+Ruby version of <EM>Guis</EM>). I built a thread-less
+Python-2.2<SUP><A NAME="text5" HREF="#note5">5</A></SUP> which works with Guis. I am using GNU gcc (3.3)
+ and GNU make (3.80). You may add a local <TT>_local.mk</TT> file
+ containing definitions for your installation, such as <TT>PREFIX=/usr</TT>, <TT>CC=gcc-3.3</TT>, <TT>PYTHONCFLAGS=-I/usr/include/python2.2</TT> or <TT>PYTHONLDFLAGS=-lpython2.2</TT> <TT>RUBY=ruby</TT> etc... you may even
+ edit the Makefile.<BR>
+<BR>
+First configure, either with <TT>make config</TT> or with the <TT>./Configure</TT> script. Run it with <TT>-help</TT> to get usage
+ information.<BR>
+<BR>
+Then run <TT>make</TT> then <TT>make install</TT> (which usually requires to be
+root). <BR>
+<BR>
+You may build only the Ruby version with <TT>make ruguis</TT> or only the
+Python version with <TT>make pyguis</TT>.<BR>
+<BR>
+To run the demo, you probably need to add <TT>.</TT> or the <EM>Guis</EM>
+source directory to your <TT>$PATH</TT> before running <TT>guis_demo.sh</TT> or you can run the <TT>guisdemo_script -p
+ guisdemo_client -T</TT> command. use <TT>guisdemo_rubyscript</TT> to run
+the Ruby version.<BR>
+<BR>
+<!--TOC subsection invoking Guis-->
+
+<H3><A NAME="htoc14">2.2</A>&nbsp;&nbsp;invoking Guis</H3><!--SEC END -->
+
+<A NAME="invocation"></A>
+See the man page in the source distribution for complete reference of
+invocation, or invoke the binay with the <TT>--help</TT> option.<BR>
+<BR>
+<EM>Guis</EM> is usually invoked as <TT>pyguis</TT> command, or indirectly
+as <TT>pyguis-scripter</TT> if started by its initial script.<BR>
+<BR>
+Guis can be started in a slave fashion (after the application has
+started) by specifing its input and output channels (thru the <TT>-i</TT>
+and <TT>-o</TT> options). You may specify file descriptors or paths as
+channels.<BR>
+<BR>
+Guis can also be started as a master, by giving the application
+command as argument with <TT>-p</TT>. You usually need to quote this
+argument (because of your shell) unless the command has no spaces!<BR>
+<BR>
+The <TT>-T</TT> option is interesting to show the exchange between <EM>guis</EM> and its application in a separate window. This is very useful
+ to debug your initial script or your application. <BR>
+<BR>
+The <TT>-D</TT> option (disabled with <TT>-DNDEBUG</TT> compile flag) show
+lots of debugging information (to debug <TT>pyguis</TT> itself).<BR>
+<BR>
+The <TT>-L</TT> option writes all requests into a log file.<BR>
+<BR>
+the <TT>-I</TT> or <TT>--input-enconding</TT> option set the input encoding
+(as supported by GLib2 on input channels). Likewise for <TT>-O</TT> or <TT>--output-enconding</TT> <BR>
+<BR>
+<!--TOC section Guis for Python-->
+
+<H2><A NAME="htoc15">3</A>&nbsp;&nbsp;Guis for Python</H2><!--SEC END -->
+
+<!--TOC subsection invocation-->
+
+<H3><A NAME="htoc16">3.1</A>&nbsp;&nbsp;invocation</H3><!--SEC END -->
+
+as usual, see section <A HREF="#invocation">2.2</A> above.<BR>
+<BR>
+<!--TOC subsubsection added Python primitives-->
+
+<H4><A NAME="htoc17">3.1.1</A>&nbsp;&nbsp;added Python primitives</H4><!--SEC END -->
+
+In alphabetical order, here are the names wired in the <TT>guis</TT>
+builtin Python module. You need of course to learn and use the modules
+provided by <TT>pygtk</TT> to actually build any GTK2 widget! You should
+not explicitly call <TT>gtk_main_loop</TT> from Python, since it is is
+already called by <TT>pyguis</TT><BR>
+<BR>
+<!--TOC subsubsection end_of_input_hook-->
+
+<H4><A NAME="htoc18">3.1.2</A>&nbsp;&nbsp;end_of_input_hook</H4><!--SEC END -->
+
+With a callable argument, sets the hook called at end of input. Always
+return the previous hook (even without any arguments). You probably
+also need to set the end timeout using <TT>end_timeout</TT> below.<BR>
+<BR>
+<!--TOC subsubsection end_timeout-->
+
+<H4><A NAME="htoc19">3.1.3</A>&nbsp;&nbsp;end_timeout</H4><!--SEC END -->
+
+Get (without arguments) or set (with an integer argument) the timeout
+in milliseconds after which <TT>pyguis</TT> exits at end of input. Useful
+with <TT>end_of_input_hook</TT> above.<BR>
+<BR>
+<!--TOC subsubsection guis_send-->
+
+<H4><A NAME="htoc20">3.1.4</A>&nbsp;&nbsp;guis_send</H4><!--SEC END -->
+
+Send the string argument on the output channel to the application. The
+string should not contain control characters (this is not checked)
+otherwise the application might have trouble scanning it. A newline is
+added if needed. (You may use many Python packages to build the sent
+string; eg you could send XML stuff).<BR>
+<BR>
+<!--TOC subsubsection main_loop_in_script-->
+
+<H4><A NAME="htoc21">3.1.5</A>&nbsp;&nbsp;main_loop_in_script</H4><!--SEC END -->
+
+Get (without argument) or set (with a truth-value argument) the flag
+telling <EM>Guis</EM> that the main loop <TT>gtk_main</TT> was called from
+the initial script.<BR>
+<BR>
+<!--TOC subsubsection nb_replies-->
+
+<H4><A NAME="htoc22">3.1.6</A>&nbsp;&nbsp;nb_replies</H4><!--SEC END -->
+
+Get (without arguments) the number of sent replies (event lines sent
+to application). You might set this number with an integer argument
+(but I see no reason to do this).<BR>
+<BR>
+<!--TOC subsubsection nb_requests-->
+
+<H4><A NAME="htoc23">3.1.7</A>&nbsp;&nbsp;nb_requests</H4><!--SEC END -->
+
+Get the number of processed Python requests. You might set this number
+with an integer argument (but I see no reason to do this).<BR>
+<BR>
+<!--TOC subsubsection pipe_check_period-->
+
+<H4><A NAME="htoc24">3.1.8</A>&nbsp;&nbsp;pipe_check_period</H4><!--SEC END -->
+
+Get (without arguments) or set (with an integer argument) the period
+in milliseconds (should be 0 or 50 to 10000) to check for application
+termination (in master mode). Useful with <TT>end_of_input_hook</TT>
+above.<BR>
+<BR>
+<!--TOC subsubsection to_guis-->
+
+<H4><A NAME="htoc25">3.1.9</A>&nbsp;&nbsp;to_guis</H4><!--SEC END -->
+
+<A NAME="pyth:toguis"></A>
+Convert an object (or many of them, considered as a tuple) to a string
+sendable to the application using the following algorithm:
+<UL><LI>if the object is string, represent it in C syntax (except that
+ double quotes are escaped as <CODE><TT>\Q</TT></CODE> so they are only string
+ delimiters in the converted string) , so the string made of 4
+ characters (a, tabulation, double-quote, z) is converted to the 7
+ character string <CODE><TT>"a\t\Qz"</TT></CODE><BR>
+<BR>
+<LI>if the object is an integer, represent it in decimal notation<BR>
+<BR>
+<LI>if the object is a double, represent it like in C with a <TT>#</TT> prefix<SUP><A NAME="text6" HREF="#note6">6</A></SUP>, eg
+ <TT>#3.14</TT><BR>
+<BR>
+<LI>if the object is a tuple, convert each component using the same
+ <TT>to_guis</TT> builtin function and catenate each substring with
+ spaces for separation - if any component fails to be converted, the
+ entire tuple conversion fails.<BR>
+<BR>
+<LI>if the object has a <TT>to_guis</TT> attribute, fetch it: if it is
+ a string, return it, if it is callable, apply it to the object.<BR>
+<BR>
+<LI>if the object has a <TT>to_guis</TT> method, call it (without any
+ arguments except the recieving object).<BR>
+<BR>
+<LI>otherwise, fail</UL>
+<!--TOC subsubsection xml_coded-->
+
+<H4><A NAME="htoc26">3.1.10</A>&nbsp;&nbsp;xml_coded</H4><!--SEC END -->
+
+Quickly convert a Python string or unicode to its XML representation
+(so the 3 characters string <CODE><TT>a&lt;b</TT></CODE> is converted to the 6
+characters string <CODE><TT>a&amp;lt;b</TT></CODE>), escaping characters per XML
+requirements:
+<UL><LI>
+<CODE><TT>&amp;</TT></CODE> as <CODE><TT>&amp;amp;</TT></CODE> 
+<LI><CODE><TT>'</TT></CODE> as <CODE><TT>&amp;apos;</TT></CODE>
+<LI><CODE><TT>"</TT></CODE> as <CODE><TT>&amp;quot;</TT></CODE> 
+<LI><CODE><TT>&lt;</TT></CODE> as <CODE><TT>&amp;lt;</TT></CODE> 
+<LI><CODE><TT>&gt;</TT></CODE> as <CODE><TT>&amp;gt;</TT></CODE> 
+<LI>other strict ASCII printable characters are kept identical
+<LI>all other characters including control and IsoLatin1 accentuated
+ characters like <TT>é à</TT> are represented by a numerical entity
+ (character number in decimal) like 
+<CODE><TT>&amp;#231;</TT></CODE> for the lowercase c with cedilla <CODE><TT>ç</TT></CODE>
+</UL>
+The result of <TT>guis.xml_coded</TT> is a string with only ASCII
+printable characters (coded 32-126).<BR>
+<BR>
+<!--TOC section Guis with Ruby-->
+
+<H2><A NAME="htoc27">4</A>&nbsp;&nbsp;Guis with Ruby</H2><!--SEC END -->
+
+<A NAME="sec:rubyport"></A>
+<EM>Guis</EM> has been ported to Ruby 1.8.
+See <A HREF="http://www.ruby-lang.org/"><TT>http://www.ruby-lang.org/</TT></A> for more on Ruby. The binary name
+is <TT>ruguis</TT> (including the <TT>ruguis-scripter</TT> trick) and has
+the same invocation as the <TT>pyguis</TT> (Python) version. The Ruby
+port is in the file <TT>ru_gguis.c</TT><BR>
+<BR>
+This port uses the <I>ruby-gnome2</I> binding of GTK2. See
+<A HREF="http://ruby-gnome2.sourceforge.jp/"><TT>http://ruby-gnome2.sourceforge.jp/</TT></A>.<BR>
+<BR>
+The demo works in a Ruby way - it is in the <TT>guisdemo_rubyscript</TT>
+file and can be run as
+<CODE><TT>ruguis -T -D -s guisdemo_rubyscript -p guisdemo_client</TT></CODE> 
+(provided that <TT>.</TT> is inside your <CODE>$PATH</CODE>)<BR>
+<BR>
+<!--TOC subsection open questions-->
+
+<H3><A NAME="htoc28">4.1</A>&nbsp;&nbsp;open questions</H3><!--SEC END -->
+
+I don't know if a builtin module can have virtual variables (as
+defined by the <TT>rb_define_virtual_variable</TT> C function of the
+Ruby runtime).<BR>
+<BR>
+I would like to print more (e.g. the current environment in <TT>debug_extra</TT>) but I don't know how to code it.<BR>
+<BR>
+<!--TOC subsection Ruby API-->
+
+<H3><A NAME="htoc29">4.2</A>&nbsp;&nbsp;Ruby API</H3><!--SEC END -->
+
+There is a builtin <TT>Guis</TT> Ruby module. It contains the <TT>guis_send</TT> primitive to send a string back to the application.<BR>
+<BR>
+<TT>$guis_nbreq</TT>, <TT>$guis_nbsend</TT> and <TT>$guis_pipecheckperiod</TT>
+are (global) virtual variables (implemented thru <TT>rb_define_virtual_variable</TT> C function).<BR>
+<BR>
+<TT>$guis_main_loop_in_script</TT> is a global variable which when
+set to a true value avoid calling <TT>gtk_main</TT> after interpreting
+the initial script (which should hence call <TT>Gtk.main</TT>
+explicitly).<BR>
+<BR>
+Conversion to XML notation is done by the <TT>to_xml</TT> method added
+to the existing <TT>String</TT> class.<BR>
+<BR>
+Conversion to a C-like notation (like <TT>to_guis</TT> in Python above
+<A HREF="#pyth:toguis">3.1.9</A>) is done by the <TT>to_guis</TT> method with built-in
+implementations for arrays, strings, integers, floats, symbols. The
+user could add other methods to existing classes by Ruby code like
+<BLOCKQUOTE><FONT COLOR=navy>
+</FONT><PRE><FONT COLOR=navy><TT>
+ExistingClass.class_eval { 
+  def to_guis
+    return "result"
+  end 
+}
+</TT></FONT></PRE></BLOCKQUOTE>
+Then end of input hook is settable with
+<BLOCKQUOTE><FONT COLOR=navy>
+</FONT><PRE><FONT COLOR=navy><TT>
+Guis::on_end_of_input do |timeout|
+  # user end input hook
+done
+</TT></FONT></PRE></BLOCKQUOTE>
+To remove the end of input hook, just do
+<BLOCKQUOTE><FONT COLOR=navy>
+</FONT><PRE><FONT COLOR=navy><TT>
+#removing end of input hook
+Guis::on_end_of_input
+</TT></FONT></PRE></BLOCKQUOTE>
+<!--TOC section experimental and incomplete Slang version of GUIS using slgtk-->
+
+<H2><A NAME="htoc30">5</A>&nbsp;&nbsp;experimental and incomplete Slang version of GUIS using slgtk</H2><!--SEC END -->
+
+See <A HREF="http://s-lang.org/"><TT>http://s-lang.org/</TT></A> for the Slang interpreter. See
+<A HREF="http://space.mit.edu/cxc/software/slang/modules/slgtk"><TT>http://space.mit.edu/cxc/software/slang/modules/slgtk</TT></A> for the
+Slgtk binding of Slang to GTK.<BR>
+<BR>
+The GUIS port to Slang is incomplete and barely tested. See the source
+code for details. Feedback is welcome.<BR>
+<BR>
+<!--TOC section Feedback-->
+
+<H2><A NAME="htoc31">6</A>&nbsp;&nbsp;Feedback</H2><!--SEC END -->
+
+<!--TOC subsection Feedback welcome-->
+
+<H3><A NAME="htoc32">6.1</A>&nbsp;&nbsp;Feedback welcome</H3><!--SEC END -->
+
+Please send comments, criticisms, suggestions and patches to
+<A HREF="mailto:basile_NOSPAM@starynkevitch.net.invalid">basile_NOSPAM@starynkevitch.net.invalid</A> (but remove the <TT>_NOSPAM</TT> and <TT>.invalid</TT> from the email) mentioning <TT>guis</TT>
+in the subject line. Feel free to suggestion new features. Tell me
+about any success stories (ie Guis use) in your applications!<BR>
+<BR>
+
+    
+  <p>I am interested by your <a href=
+  "../showinterest.php?name=guisdoc">feedback</a> <small>(to this
+  <tt>guisdoc</tt> page)</small></p>
+
+ <form action="../interest.php" method="post">
+  Did you find this page:<br>
+
+  <input type="hidden" name="page" value="guisdoc"> 
+
+  <input type="hidden" name="rev" value="$Revision: 1.30 $"> 
+
+  <input type="radio" name="rate" value="1">Highly Interesting
+      <small>(1)</small>; &nbsp; 
+
+  <input type="radio" name="rate" value="2">Interesting 
+       <small>(2)</small>; &nbsp; 
+
+  <input type="radio" name="rate" value="3">Uninteresting
+      <small>(3)</small>; &nbsp; 
+
+  <input type="radio" name="rate" value="4">Awefully Uninteresting 
+       <small>(4)</small><br>
+       
+   <input type="submit" value="Send feedback.">
+ </form>
+
+<BR>
+<BR>
+ <!--TOC subsection Change log-->
+
+<H3><A NAME="htoc33">6.2</A>&nbsp;&nbsp;Change log</H3><!--SEC END -->
+
+<DL COMPACT=compact><DT><B>version 1.6</B><DD> (december 30, 2004) - minor code clean.<BR>
+<BR>
+<DT><B>version 1.5</B><DD> (may 10, 2004) - ported to Gtk2.2, added Slang
+ preliminary port (and non-working port to Perl).<BR>
+<BR>
+<DT><B>version 1.4</B><DD> (september 5, 2003) bugfix (read buffer uses <TT>GString</TT>) and added <CODE><TT>guis_main_loop_in_script</TT></CODE>),
+ with both Python2.2 and Python2.3 support.<BR>
+<BR>
+<DT><B>version 1.3</B><DD> (september 2, 2003) contains the experimental Ruby port
+(and warns against exception in callbacks). 
+<UL><LI>
+1.3.1 added word wrap in
+trace window, 
+<LI>1.3.2 added logfiles with <TT>-L</TT> with the Gtk.init
+requirement in user scripts for Ruby
+<LI>1.3.3 <FONT SIZE=2>(september 3, 2002)</FONT> shows the versions info
+ in trace window
+<LI>1.3.4 <FONT SIZE=2>(september 4, 2002)</FONT> removed the Gtk.init
+ requirement in the user initial script
+</UL><BR>
+<BR>
+<DT><B>version 1.2</B><DD> (august 31, 2003) minor fixes: just added the <TT>guis.xml_coded</TT> primitive and updated the demo and the
+documentation.<BR>
+<BR>
+<DT><B>version 1.1</B><DD> (august 30, 2003) made a major switch to Python using
+PyGTK previous versions used Lua).<BR>
+<BR>
+<DT><B>versions &lt;= 0.3</B><DD> (march 22, 2003) and older was Lua based
+ (with a Gtk binding to Lua generated by a CommonLisp script)</DL>
+<!--BEGIN NOTES document-->
+<HR WIDTH="50%" SIZE=1><DL><DT><A NAME="note1" HREF="#text1"><FONT SIZE=5>1</FONT></A><DD>To port Guis to another language you just have to
+ link <TT>gguis.c</TT> with a file similar to <TT>py_guis.c</TT> for your
+ scripting language which provides the following functions : <TT>guis_initialize_interpreter(void)</TT> (called once to initialise the
+ interpreter), <TT>guis_load_initial_script(char* scriptname)</TT> (called
+ once with either the initial script name -a file path- or NULL),
+ <TT>guis_interpret_request(char* request)</TT> (called for every request),
+ and <TT>guis_end_of_input_hook(int timeout)</TT> (called at end of input
+ with a timeout in milliseconds). These last 3 functions should
+ return 0 if successful, or a static C string describing the error.
+<DT><A NAME="note2" HREF="#text2"><FONT SIZE=5>2</FONT></A><DD>The newline is coded decimal 10 in
+ ASCII or IsoLatin1
+<DT><A NAME="note3" HREF="#text3"><FONT SIZE=5>3</FONT></A><DD>How to enter a tab character inside a Gtk entry
+ widget is left as an exercise to the reader.
+<DT><A NAME="note4" HREF="#text4"><FONT SIZE=5>4</FONT></A><DD>Actually
+ requests are identified by their first line in error messages.
+<DT><A NAME="note5" HREF="#text5"><FONT SIZE=5>5</FONT></A><DD>I passed the -disable-threads option to Python's
+ configure script
+<DT><A NAME="note6" HREF="#text6"><FONT SIZE=5>6</FONT></A><DD>Distinguishing floating numbers from integers
+ with a prefix should make parsing easier for the application.
+</DL>
+<!--END NOTES-->
+<!--HTMLFOOT-->
+<!--ENDHTML-->
+<!--FOOTER-->
+<HR SIZE=2>
+<BLOCKQUOTE><EM>This document was translated from L<sup>A</sup>T<sub>E</sub>X by
+</EM><A HREF="http://pauillac.inria.fr/~maranget/hevea/index.html"><EM>H<FONT SIZE=2><sup>E</sup></FONT>V<FONT SIZE=2><sup>E</sup></FONT>A</EM></A><EM>.
+</EM></BLOCKQUOTE>
+</BODY>
+</HTML>

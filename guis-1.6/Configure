@@ -1,0 +1,330 @@
+#! /bin/bash
+# prcsid $Id: Configure 1.4 Sun, 09 May 2004 21:43:24 +0200 basile $
+# prcsproj $ProjectHeader: Guis 1.62 Thu, 30 Dec 2004 14:14:05 +0100 basile $
+
+python=auto
+ruby=auto
+perl=none # dont work yet
+slanglib=auto
+config=_config.mk
+cc=cc
+cflags="-O"
+ldflags=""
+libs=""
+ruby="auto"
+python="auto"
+verbose=""
+
+# Try to turn internationalization off
+unset LANG
+unset LC_ALL LC_CTYPE LC_COLLATE LC_MESSAGES LC_MONETARY LC_NUMERIC LC_TIME 
+
+function usage() {
+    echo usage: $0 "## configuration of GUIS"
+    echo " ## GUIS from http://starynkevitch.net/Basile/guisdoc.html or on freshmeat"
+# $Format: "    echo \" ## GUIS version $ReleaseVersion$ of $Date$ (prcs $Project$ $ProjectVersion$)\""$
+    echo " ## GUIS version 1.6 of Sun, 09 May 2004 21:43:24 +0200 (prcs Guis 1.62)"
+    echo " [-v #for verbose configuration]"
+    echo " [-prefix prefix_path #default /usr/local]"
+    echo " [-o output_config_file #default $config]"
+    echo " [-cc c_compiler_command #default $cc]"
+    echo " [-cflags 'c compiler flags' #default \"$cflags\"]"
+    echo " [-ldflags 'link flags' #default \"$ldflags\"]"
+    echo " [-libs 'additional C libraries' #default \"$libs\"]"
+    echo " [-ruby ruby_interpreter (or auto or none) #default \"$ruby\"]"
+    echo " [-python python_interpreter (or auto or none) #default \"$python\"]"
+#    echo " [-perl perl_interpreter (or auto or none) #default \"$perl\"]"
+}
+
+function parseargs() {
+    while : ; do
+	case "$1" in
+	    "") break;;
+	    -v|--verbose)
+		verbose="-v"; shift;;
+	    -prefix|--prefix)
+		prefix=$2; shift 2;;
+	    -o)
+		config=$2; shift 2;;
+	    -cc|--cc)
+		cc=$2; shift 2;;
+	    -cflags|--cflags)
+		cflags=$2; shift 2;;
+	    -ldflags[--ldflags)
+		ldflags=$2; shift 2;;
+	    -libs|--libs)
+		libs=$2; shift 2;;
+	    -ruby)
+		ruby=$2; shift 2;;
+	    -python)
+		python=$2; shift 2;;
+	    -perl)
+		perl=$2; shift 2;;
+	    *) 
+		echo invalid arg "$1"
+		usage
+		exit 1;;
+	esac
+    done
+}
+
+
+
+parseargs $*
+
+
+if [ -f $config ]; then
+    mv $config $config~
+fi
+
+
+function verbecho() {
+    if [ -n "$verbose" ]; then
+	echo $*
+    fi
+}
+
+function verbprintf() {
+    if [ -n "$verbose" ]; then
+	printf $*
+    fi
+}
+
+
+function echoconf() {
+    echo $* >> $config
+    verbecho configuring $*
+}
+
+function printfconf() {
+    printf $* >> $config
+    fmt=$1; shift
+    verbprintf "configuring $fmt" $*
+}
+
+verbecho configuration output $config
+
+date +"#generated $config file %D %T on `hostname`" > $config
+
+
+################################################################ ruby
+if [ "$ruby" = "auto" ]; then
+    ruby=none
+    for rubycmd in  ruby ruby2.0 ruby-2.0 ruby1.9 ruby-1.9  ruby1.8 ruby-1.8; do
+	wruby=$(which $rubycmd)
+	if [ -n "$wruby" ]; then
+	    verbecho found ruby in $wruby;
+	    ruby=$wruby
+	    break
+	fi
+    done;
+    verbecho found ruby $ruby
+fi
+
+function check_ruby() {
+
+    rubyversion=$($ruby --version)
+
+    if [ -z "$rubyversion" -o ! $? ]; then
+	echo cannot find ruby version, ... 
+	echo ... maybe reconfigure with explicit ruby
+	usage
+	exit 1
+    fi
+
+    rubygtkversion=$($ruby -e "require 'gtk2'; print Gtk::VERSION")
+    if [ -z "$rubygtkversion" -o ! $? ]; then
+	echo cannot find ruby GTK, ...
+	echo ... maybe install ruby-gnome and reconfigure
+	return
+    fi
+
+    rubygtkbindingversion=$($ruby -e "require 'gtk2'; print Gtk::BINDING_VERSION")
+
+    echoconf RUBY_VERSION=$rubyversion
+    echoconf RUBY_GTK_VERSION=$rubygtkversion
+    echoconf RUBY_GTK_BINDING_VERSION=$rubygtkbindingversion
+
+    rubyarchdir=$($ruby -e "require 'rbconfig'; print Config::CONFIG['archdir']")
+    
+    if [ -z "$rubyarchdir" -o ! $? ]; then
+	echo cannot find ruby archdir, ... 
+	echo ... maybe reconfigure with explicit ruby
+	usage
+	exit 1
+    fi
+
+    if [ ! -f "$rubyarchdir/ruby.h" ]; then
+	echo cannot find ruby.h in rubyarchdir $rubyarchdir, ...
+	echo ... maybe reconfigure or install ruby development files
+	usage
+	exit 1
+    fi
+
+    echoconf RUBY_CFLAGS=-I$rubyarchdir 
+    echoconf RUBY_LDFLAGS=-L$rubyarchdir
+
+    rubylibarg=$($ruby  -e "require 'rbconfig'; print Config::CONFIG['LIBRUBYARG']")
+    verbecho ruby LIBRUBYARG is $rubylibarg
+    rubylibs=$($ruby  -e "require 'rbconfig'; print Config::CONFIG['LIBS']")
+    verbecho ruby LIBS are $rubylibs
+    echoconf RUBY_LIBS= $rubylibarg  $rubylibs 
+}
+
+if [ -n "$ruby" -a "$ruby" != "none" ]; then
+    check_ruby
+fi
+
+
+
+################################################################ python
+if [ "$python" = "auto" ]; then
+    python=none
+    for pythoncmd in python python2.4 python-2.4 python2.3 python-2.3 python2.2 python-2.2; do
+	wpython=$(which $pythoncmd)
+	if [ -n "$wpython" ]; then
+	    verbecho found python in $wpython;
+	    python=$wpython
+	    break
+	fi
+    done;
+    verbecho found python $python
+fi
+
+function check_python() {
+    pythonversion=$($python -c 'import sys; print sys.version')
+    if [ -z "$pythonversion" -o ! $? ]; then
+	echo cannot find python version, ... 
+	echo ... maybe reconfigure with explicit python
+	usage
+	exit 1
+    fi
+
+    pythongtkversion=$($python -c 'import gtk; print gtk.gtk_version')
+    if [ -z "$pythongtkversion" -o ! $? ]; then
+	echo python gtk not installed ... maybe install it and reconfigure
+	return
+    fi
+
+    echoconf PYTHON_VERSION=$pythonversion
+    echoconf PYTHON_GTK_VERSION=$pythongtkversion
+
+    pythonincldir=$($python -c 'import sys; print sys.prefix+ "/include/python" + sys.version[:3]')
+    if [ -z "$pythonincldir" -o ! $? -o ! -f "$pythonincldir/Python.h" ]; then
+	echo cannot find python include dir $pythonincldir, ... 
+	echo ... maybe reconfigure with explicit python or install python development files
+	usage
+	exit 1
+    fi
+    echoconf PYTHON_CFLAGS=-I$pythonincldir
+    pythonlibdir=$($python -c 'import sys; print sys.prefix+ "/lib"')
+    if [ -n "$pythonlibdir" -a -d "$pythonlibdir" ]; then
+	echoconf PYTHON_LDFLAGS=-L$pythonlibdir
+    fi
+    pythonlibs=$($python -c 'import sys; print "-lpython" + sys.version[:3]')
+    echoconf PYTHON_LIBS=$pythonlibs
+}
+
+if [ -n "$python" -a "$python" != "none" ]; then
+    check_python
+fi
+
+################################################################ perl
+if [ "$perl" = "auto" ]; then
+    perl=none
+    for perlcmd in perl perl5 perl-5 perl5.8 perl-5.8; do
+	wperl=$(which $perlcmd)
+	if [ -n "$wperl" ]; then
+	    verbecho found perl in $wperl;
+	    perl=$wperl
+	    break
+	fi
+    done;
+    verbecho found perl $perl
+fi
+
+function check_perl() {
+    perlversion=$($perl -MConfig -e 'print $Config{version}')
+    if [ -z "$perlversion" -o ! $? ]; then
+	echo cannot find perl version, ... 
+	echo ... maybe reconfigure with explicit perl
+	usage
+	exit 1
+    fi
+
+    perlcflags=$($perl  -MExtUtils::Embed -e ccopts)
+    if [ -z "$perlcflags"  -o ! $? ]; then
+	echo perl mandatory ExtUtils module missing
+	exit 1
+    fi
+
+    perlldopts=$($perl  -MExtUtils::Embed -e ldopts -- -std gtk2)
+    
+    perlgtkversion=$($perl -MGtk2 -e 'print $Gtk2::VERSION')
+    if [ -z "$perlgtkversion" -o ! $? ]; then
+	echo perl gtk2 not installed ... maybe install it and reconfigure
+	return
+    fi
+
+    perlarchlib=$($perl -MConfig -e 'print $Config{archlib}')
+    echoconf PERL_VERSION=$perlversion
+    echoconf PERL_GTK2_VERSION=$perlgtkversion
+    echoconf PERL_CFLAGS=$perlcflags
+    echoconf PERL_LDOPTS=$perlldopts
+}
+
+if [ -n "$perl" -a "$perl" != "none" ]; then
+    echo perl not supported yet
+    exit 1
+#    check_perl
+fi
+
+################################################################ slang
+if [ "$slanglib" = "auto" ]; then
+    for slib in "-lslang" "-lslang1"; do
+	verbecho trying to compile config_slang.c with $slib
+	slanglib=none
+	rm -f _config_slang config_slang_compile
+	$cc $cflags config_slang.c -o _config_slang $ldflags $slib >& _config_slang_compile
+	compilstatus=$?
+	if [ "$compilstatus" -eq 0 ]; then
+	    ./_config_slang
+	    runstatus=$?
+	    if [ "$runstatus" -eq 0 -a -n "$slangversion" ]; then
+		slanglib=$slib
+		break
+	    fi
+	fi
+    done
+fi
+
+function check_slang() {
+    rm _config_slang
+    $cc $cflags config_slang.c -o _config_slang $ldflags $slanglib & _config_slang_compile
+    if [ ! -x _config_slang ]; then
+	echo cannot compile slang using $slanglib ...
+	echo ... maybe reconfigure with slanglib
+	usage
+	exit 1
+    fi
+    slangversion=$(./_config_slang 'message(_slang_version_string)')
+    if [ $? -ne 0 -o -z "$slangversion" ]; then
+	echo cannot get slang version using $slanglib ...
+	echo ... maybe reconfigure with slanglib
+	usage
+	exit 1
+    fi
+    verbecho got slang version $slangversion
+    slgtkversion=$(./_config_slang 'import("gtk"); message(_slgtk_version_string)')
+    if [ $? -ne 0 -o -z "$slgtkversion" ]; then
+	echo cannot get slgtk version using $slanglib ...
+	echo ... maybe install slgtk reconfigure with slanglib
+	usage
+	exit 1
+    fi
+    verbecho got slgkt version $slgtkversion
+    echoconf SLANG_LIB=$slanglib
+    echoconf SLANG_VERSION=$slangversion
+    echoconf SLGTK_VERSION=$slgtkversion
+}
+#eof $Id: Configure 1.4 Sun, 09 May 2004 21:43:24 +0200 basile $

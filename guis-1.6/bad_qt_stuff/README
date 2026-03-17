@@ -1,0 +1,16 @@
+
+this C++ code dont even compile but might be used to make a guis under
+QT3 provided one find out how to plug in a good scripting interpreter
+inside. I made a tentative with some XML syntax for input. I also
+tried to embed QSA (trolltech Javascript interpreter for QT) but it
+requires too much work to bind most of QT3 to it. I had big problems
+with Python and posix threads used by many QT3 implementations.
+
+Please fill free to reuse and enhance this code (under a GNU license
+please) which don't compile and don't work.
+
+Basile STARYNKEVITCH <basile@starynkevitch.net>
+
+$Id: README 1.1 Sun, 31 Aug 2003 02:17:59 +0200 basile $
+
+

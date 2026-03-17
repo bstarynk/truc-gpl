@@ -1,0 +1,84 @@
+#! /usr/bin/env ruguis-scripter
+# $Id: guisdemo_rubyscript 1.4 Tue, 02 Sep 2003 22:15:06 +0200 basile $
+require 'gtk2'
+
+# mandatory
+Gtk.init
+
+def end_cb()
+  Guis::guis_send("END")
+end
+
+def updated_cb()
+  Guis::guis_send("ADD " + $xent.text.dump + " " + $yent.text.dump)
+end
+
+$stderr.printf("after updated_cb definition\n")
+
+def start(welcomsg)
+  $stderr.printf("start %s\n", welcomsg)
+  $window = Gtk::Window.new
+  $window.set_title("Guis Demo")
+  vbox = Gtk::VBox.new(false,0)
+  $window.add(vbox)
+  $window.signal_connect("destroy")  do 
+    end_cb
+  end
+  $window.border_width = 10
+  label = Gtk::Label.new()
+  label.set_markup("<b>Guis demo</b>\n" + welcomsg.to_xml)
+  vbox.add(label)
+  ## X stuff
+  xbox = Gtk::HBox.new(false,3)
+  vbox.add(xbox)
+  xlab = Gtk::Label.new("x=")
+  xbox.add(xlab)
+  $xent = Gtk::Entry.new()
+  $xent.text = "0"
+  xbox.add($xent)
+  $xent.signal_connect("activate") do 
+    updated_cb
+  end
+  ## Y stuff
+  ybox = Gtk::HBox.new(false,3)
+  vbox.add(ybox)
+  ylab = Gtk::Label.new("y=")
+  ybox.add(ylab)
+  $yent = Gtk::Entry.new()
+  $yent.text = "1"
+  ybox.add($yent)
+  $yent.signal_connect("activate") do
+    updated_cb
+  end
+  ## sum label
+  $sumlab = Gtk::Label.new()
+  vbox.add($sumlab)
+  quitbut = Gtk::Button.new("quit")
+  quitbut.signal_connect("clicked") do
+    end_cb
+  end
+  vbox.add(quitbut)
+  $window.show_all
+end
+
+def displaysum(x,y,sum)
+  $stderr.printf("displaysum %d %d %d\n", x,y,sum)
+  $sumlab.set_markup("<i>%d</i> + <i>%d</i> = <big>%d</big>" % [x,y,sum])
+end
+
+def displayerror(message)
+  $stderr.printf("displayerror %s\n", message)
+  $sumlab.set_markup("<b>ERROR:</b> " + message)
+end
+
+def stopdemo()
+  $stderr.printf("stopdemo\n")
+  $window.hide
+  $window.destroy
+end
+
+def Guis::end_of_input_hook()
+  $stderr.printf("end of input\n")
+end
+
+#eof $Id: guisdemo_rubyscript 1.4 Tue, 02 Sep 2003 22:15:06 +0200 basile $

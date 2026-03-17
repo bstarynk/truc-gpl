@@ -1,0 +1,161 @@
+# file GUIS/Makefile_guis
+# a -*- Makefile -*- for GNU make (3.80 or better)
+# $Id: Makefile_guis 1.10.1.14.1.26 Mon, 10 May 2004 22:14:09 +0200 basile $
+
+RM=rm -vf
+MV=mv -f
+LN=ln -sv
+DATE=date
+LATEX=latex
+HEVEA=hevea
+DVIPS=dvips
+DVIPDF=dvipdf
+INSTALL=install
+TARDY=tardy
+GZIP=gzip -9 
+TAR=tar
+INDENT=indent
+CONVERT=convert -resize 75x75%
+PREFIX=/usr/local
+SYNC=sync
+CFLAGS=-Wall -O -g
+# for PRCS format
+# $Format: "VERSION=$ReleaseVersion$" $
+VERSION=1.6
+GTKCFLAGS:= $(shell pkg-config gtk+-2.0 --cflags) $(shell pkg-config pango --cflags)
+GTKLDFLAGS:= $(shell pkg-config gtk+-2.0 --libs)
+
+
+
+
+
+PROGRAMS= guisdemo_client 
+
+
+.PHONY: all config prog doc clean halfclean install
+
+
+all: _config.mk prog doc
+	$(SYNC)
+
+config: Configure
+	./Configure 
+
+_config.mk:
+	@echo please make config or run ./Configure first with -help
+	@exit 1
+
+-include _config.mk
+
+ifdef PYTHON_VERSION
+PROGRAMS+= pyguis
+endif
+
+ifdef RUBY_VERSION
+PROGRAMS+= ruguis
+endif
+
+ifdef SLANG_LIB
+PROGRAMS+= slguis
+endif
+
+prog:  _config.mk $(PROGRAMS)
+
+gguis.o:  override CFLAGS += $(GTKCFLAGS) 
+
+pyguis:  override LDFLAGS=$(GTKLDFLAGS) $(PYTHON_LDFLAGS) 
+pyguis:  override LDLIBS+=$(PYTHON_LIBS)
+pyguis: gguis.o common.o py_gguis.o
+	$(LINK.c) -o $@ $^   $(LDLIBS)  -lutil
+	$(RM) pyguis-scripter
+	$(LN) $@ pyguis-scripter
+
+py_gguis.o: override CFLAGS += $(PYTHON_CFLAGS) $(GTKCFLAGS)
+
+gguis.o: gguis.c gguis.h
+py_gguis.o: py_gguis.c gguis.h
+ru_gguis.o: ru_gguis.c gguis.h
+
+ru_gguis.o: override CFLAGS += $(RUBY_CFLAGS) $(GTKCFLAGS)
+
+ruguis:  override LDFLAGS = $(GTKLDFLAGS) $(RUBY_LDFLAGS)
+ruguis:  override LDLIBS+= $(RUBY_LIBS)
+
+ruguis: gguis.o common.o ru_gguis.o
+	$(LINK.c) -o $@ $^   $(LDLIBS)  -lutil
+	$(RM) ruguis-scripter
+	$(LN) $@ ruguis-scripter
+
+sl_gguis.o: override CFLAGS += $(SLANG_CFLAGS) $(GTKCFLAGS)
+
+slguis:  override LDFLAGS=$(GTKLDFLAGS) $(SLANG_LDFLAGS) 
+slguis:  override LDLIBS+=$(SLANG_LIB)
+slguis: gguis.o common.o sl_gguis.o
+	$(LINK.c) -o $@ $^   $(LDLIBS)  -lutil
+	$(RM) slguis-scripter
+	$(LN) $@ slguis-scripter
+
+guisdemo_client: guisdemo_client.o
+
+clean: 
+	$(RM) *.o core *~ $(PROGRAMS) *.dvi *.html *.log *.ps *.eps \
+	     *.toc *.aux *.haux *.out *guis-scripter *.htoc
+
+install: pyguis.man $(PROGRAMS)
+ifdef PYTHON_VERSION
+	$(INSTALL) pyguis $(PREFIX)/bin/pyguis-$(VERSION)
+	$(INSTALL) pyguis.man $(PREFIX)/share/man/man1/pyguis.1
+	$(INSTALL) pyguis.man $(PREFIX)/share/man/man1/pyguis-scripter.1
+	$(RM)  $(PREFIX)/bin/pyguis $(PREFIX)/bin/pyguis-scripter 
+	cd $(PREFIX)/bin; $(LN) pyguis-$(VERSION) pyguis; $(LN) pyguis pyguis-scripter
+endif
+ifdef RUBY_VERSION
+	$(INSTALL) ruguis $(PREFIX)/bin/ruguis-$(VERSION)
+	$(INSTALL) pyguis.man $(PREFIX)/share/man/man1/ruguis.1
+	$(INSTALL) pyguis.man $(PREFIX)/share/man/man1/ruguis-scripter.1
+	$(RM)  $(PREFIX)/bin/ruguis $(PREFIX)/bin/ruguis-scripter 
+	cd $(PREFIX)/bin; $(LN) ruguis-$(VERSION) ruguis; $(LN) ruguis ruguis-scripter
+endif
+
+doc: guisdoc.html guisdoc.ps guisdoc.pdf
+
+guisdoc.html: guisdoc.tex
+	$(RM) *aux
+	$(HEVEA) guisdoc.tex
+	$(HEVEA) guisdoc.tex
+	$(HEVEA) guisdoc.tex
+	$(HEVEA) guisdoc.tex
+guisdoc.ps: guisdoc.dvi
+	$(DVIPS) -o $@ $<
+
+guisdoc.dvi: guisdoc.tex imgdemo.eps imgtrace.eps
+	$(RM) *aux
+	$(LATEX) guisdoc
+	$(LATEX) guisdoc
+	$(LATEX) guisdoc
+	$(LATEX) guisdoc
+
+guisdoc.pdf: guisdoc.dvi
+	$(DVIPDF)  $< $@
+
+
+imgdemo.eps: imgdemo.jpeg
+	$(CONVERT)  $< $@
+imgtrace.eps: imgtrace.jpeg
+	$(CONVERT)  $< $@
+
+indent:
+	$(INDENT) gguis.c
+	$(INDENT) gguis.h
+	$(INDENT) py_gguis.c
+	$(INDENT) ru_gguis.c
+
+halfclean:
+	$(RM)  *.o *~ core *.aux *.haux *.out *.log  *.toc *.dvi *.htoc $(PROGRAMS)
+
+dist: 
+	$(MAKE) doc halfclean
+	$(RM) _config.mk 
+	$(TAR) -cvf - . | $(TARDY)  -Clean -Group_NAme src -Prefix guis-$(VERSION) | $(GZIP) > $(HOME)/tmp/guis-$(VERSION).tar.gz
+
+# eof $Id: Makefile_guis 1.10.1.14.1.26 Mon, 10 May 2004 22:14:09 +0200 basile $

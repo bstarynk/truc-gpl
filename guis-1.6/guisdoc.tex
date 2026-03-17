@@ -1,0 +1,874 @@
+% prcsid $Id: guisdoc.tex 1.30 Thu, 30 Dec 2004 14:14:05 +0100 basile $
+% prcsproj $ProjectHeader: Guis 1.62 Thu, 30 Dec 2004 14:14:05 +0100 basile $
+\documentclass[a4paper,11pt]{article}
+\usepackage{times}
+\usepackage{hevea}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{lastpage}
+%\usepackage{fancyhdr}
+\usepackage{epsf}
+\usepackage[latin1]{inputenc}
+%\pagestyle{fancy}
+\title{GUIS - a GUI widget server\\ {\small \it
+% $Format: "release $ReleaseVersion$ on $ProjectDate$\\\\"$
+release 1.6 on Thu, 30 Dec 2004 14:14:05 +0100\\
+{\tiny \tt
+% $Format: "prcsproj $ProjectVersion$"$
+prcsproj 1.62
+}
+}}
+\author{Basile STARYNKEVITCH -- \mailto{basile\_NOSPAM@starynkevitch.net.invalid}\\
+\url{http://www.starynkevitch.net/Basile/index_en.html}\\
+\small{8, rue de la Faïencerie, 92340 Bourg La Reine, France}}
+
+\begin{document}
+
+\newenvironment{guisscript}{\begin{quote}%
+%HEVEA\navy
+\begin{latexonly}\small\end{latexonly}
+\tt}{\end{quote}}
+
+\newenvironment{applcode}{\begin{quote}%
+%HEVEA\green
+\begin{latexonly}\small\end{latexonly}
+\tt}{\end{quote}}
+
+\newenvironment{guisrequest}{\begin{quote}%
+%HEVEA\purple
+\begin{latexonly}\small\end{latexonly}
+\tt}{\end{quote}}
+
+\newenvironment{guisreply}{\begin{quote}%
+%HEVEA\blue
+\tt}{\end{quote}}
+
+\newcommand{\figimagebox}[1]{%
+%HEVEA{\imgsrc{#1.jpeg}}
+\begin{latexonly}\epsfbox{#1.eps}\end{latexonly}%
+}
+
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\begin{center}
+\begin{tabular}{|r|l|c|}
+\hline
+\multicolumn{3}{|c|}{\large Software Description}\\
+\hline
+\textbf{Name} & {GUIS}\\
+\textbf{License} & {GNU General Public License}\\
+\textbf{Author} & {Basile {\sc Starynkevitch}}\\
+\textbf{Version} &
+                                %$Format: "{$ReleaseVersion$}\\\\"$
+{1.6}\\
+\textbf{Development system} & {Linux/Debian/Sid x86}\\
+\textbf{Programming Language} & {C}\\
+\hline
+\multicolumn{3}{|c|}{\large Software Dependencies}\\
+\hline
+GTK  2.4 (or 2.2) \\ and related libraries \\
+{\small (Glib, Pango, Atk)} & required \\
+Python 2.3 (or 2.2) & recommended \\
+PyGTK 2.2 & recommended \\
+Ruby 1.8 & recommended \\
+Ryby-Gnome2 0.11.x & recommended \\
+Slang 1.4.x & optional \\
+Slgtk 0.5.x & optional \\
+\hline
+\end{tabular}
+\end{center}
+
+
+Please be nice to send me (\mailto{basile@starynkevitch.net}) an email
+if you use this information and this Guis software.
+
+Guis is available (as a gnuzipped source tarball) from
+% $Format:"\\url{http://www.starynkevitch.net/Basile/guis-$ReleaseVersion$.tar.gz}"$
+\url{http://www.starynkevitch.net/Basile/guis-1.6.tar.gz}
+%
+and this document is on
+\url{http://www.starynkevitch.net/Basile/guisdoc.html}. See also my
+home page on \url{http://www.starynkevitch.net/Basile/} or Guis page
+\url{http://freshmeat.net/projects/guis/} on Freshmeat for
+announcement of newer versions. Please feel free to send suggestions,
+patches, criticisms, etc...
+
+\section{Overview and usage}
+
+This section gives a short overview with the classical adder example.
+Then the usage details are given.
+
+
+\subsection{Motivations and related stuff}
+
+{\em Guis} is a small widget server. It is a gtk2 (see
+\url{http://www.gtk.org/}) based program listening on a pipe for
+widget requests (requests are Python [or Ruby] scripts - see
+\url{http://www.python.org/} using the PyGTK 2.0 binding of GTK2 to Python
+- see \url{http://www.daa.com.au/~james/software/pygtk/}) and
+outputting events or replies {\em Guis} is useful for programs {\small
+  (in particular, setuid programs or (ruby,ocaml,perl...) scripts)}
+which do not want to link in a full widget toolkit but prefer to
+delegate the user interface to another process.
+
+The choice of the scripting language is not critical provided it does
+have a full Gtk2 binding. Porting Guis to another scripting language
+should be easy.
+
+{\small (Many years ago, I was a satisfied user of Sun OpenWindows
+  system with its programmable NeWS [widget] server. I still miss that
+  widget server (see a message I posted in october 1993 on
+  \url{http://www.zendo.com/vsta/mail/1/0146.html} which is copied on
+  \url{http://starynkevitch.net/Basile/NeWS_descr_oct_1993.html}) I don't
+  understead why the NeWS team, which also probably designed Java, did
+  not consider to embed the JVM inside the X11 server, as a standard
+  X11 extension, and embedding a toolkit inside Java, like Swing does,
+  is not an answer.)}
+
+A similar project is {\em entity} - see \url{http://www.entity.cx/}.
+The major difference between {\em entity} and {\em guis} is that {\em
+  guis} is a server (listening for orders on a pipe...) while {\em
+  entity} is a script engine.
+
+The IRAF widget server - see
+\url{http://iraf.noao.edu/iraf/web/projects/x11iraf/} had similar goals.
+And PicoGui \url{http://picogui.org/} is also server based.
+
+The XUL system of mozilla (see \url{http://www.xulplanet.com/}) also
+describes an interface with XML.
+
+The (previously Berlin, now) Fresco server should be a corba server
+for widgets - which seems nearly dormant.  see
+\url{http://www.fresco.org/}
+
+
+
+\subsection{Introduction}
+
+{\em Guis} is a graphical user interface program communication with a
+client application (using separate protocols). The application send
+widget building requests to {\em Guis} (so these requests are input
+for {\em Guis}) and handles widget events sent from {\em Guis}.
+Usually Guis is started with a small Python initial script which
+defines common functions and build some widgets. The requests are
+Python source code chunks. The replies (i.e. events sent back from
+{\em Guis} to the application) are just some textual lines sent (by
+some Python code calling {\tt guis\_send}).
+
+Actually, {\em Guis} is strongly dependent on GTK2, and depends less
+of Python. The code is designed to make {\em Guis} easily
+portable\footnote{To port Guis to another language you just have to
+  link {\tt gguis.c} with a file similar to {\tt py\_guis.c} for your
+  scripting language which provides the following functions : {\tt
+    guis\_initialize\_interpreter(void)} (called once to initialise the
+  interpreter), {\tt guis\_load\_initial\_script(char* scriptname)} (called
+  once with either the initial script name -a file path- or NULL),
+  {\tt guis\_interpret\_request(char* request)} (called for every request),
+  and {\tt guis\_end\_of\_input\_hook(int timeout)} (called at end of input
+  with a timeout in milliseconds). These last 3 functions should
+  return 0 if successful, or a static C string describing the error.}
+to any other scripting interpreter able to evaluate requests in
+textual strings, provided this interpreter has a binding to GTK2. The
+only reason I use Python here is the availability of a nearly complete
+binding of Python to GTK2. (I would prefer some other scripting
+languages). To remind that {\em Guis} is using Python its binary is
+called {\tt pyguis}.
+
+Since version 1.3, {\em Guis} is also interfaced to Ruby. See section
+\ref{sec:rubyport} below.
+
+\subsubsection{callbacks}
+
+The initial script (or the application) is responsible for installing
+appropriate callbacks with the {\bf connect} primitive (or equivalent)
+of the scripting language (Python or Ruby). 
+
+{\Large IMPORTANT}
+Callbacks in Guis should be robust: {\bf callbacks cannot raise
+  uncaught exceptions} (because they are run by the {\tt
+  gtk\_main\_loop} in {\em Guis}, outside of the (Python or Ruby...)
+interpreter. Applications should encapsulate callbacks with the
+appropriate mechanism (catch ... ) in the scripts.
+
+
+\subsubsection{initial script}
+
+Usually, {\em Guis} runs an initial script (in Python or Ruby) which
+is interpreted by the scripting language before entering the {\tt
+  gtk\_main\_loop}. This initial script usually builds the widget and
+defines some application specific functions (to implement the protocol
+specific to your application).
+
+The initial script is run once. It is specified with the {\tt -s}
+option or with the {\tt -scripter} trick. See below \ref{invocation}
+and the man page.
+
+You might (if possible) end your initial script with a call to {\tt
+  gtk\_main\_loop} as provided by the (Python or Ruby) GTK2 binding.
+Calling it will make the request evaluation better under control and
+might permit exceptions in callbacks (see your documentation of the
+GTK binding you are using). Then you have to exit explicitly {\em
+  Guis} (by calling the {\tt exit} primitive of Python or Ruby) or
+  tell {\em Guis} (using {\tt\verb+guis_main_loop_in_script+})
+  that you call the main loop.
+
+I still strongly advise against uncaught exceptions in callbacks.
+
+
+
+\subsubsection{protocols}
+
+Every request sent from the application to {\em Guis} should end with
+two consecutive newline\footnote{The newline is coded decimal 10 in
+  ASCII or IsoLatin1} characters {coded in C as \tt \verb+\n\n+} or
+with a formfeed (coded in C as {\tt \verb+\f+}, decimal 12).
+
+Obviously requests cannot contain (inside) a double newline which is a
+convention suitable for most scripting languages (including Python,
+Ruby, Ocaml, Lua, Rep-Lisp, Slang, ...).
+
+A convenient way to debug {\em Guis} initial scripts is to run {\tt
+  pyguis} with an explicit FIFO input: make it with {\tt mkfifo
+  /tmp/fifo} and then run {\tt pyguis -s yourscript -i /tmp/fifo -o
+  -}; in another xterm, run {\tt cat >> /tmp/fifo} and don't forget to
+end every request with a double newline (ie return) character.
+
+Events or replies sent from {\em Guis} to the application are single
+lines (maybe very long) ended with a newline. They should not contain
+any control character (eg newline or formfeed) inside. Requests and
+replies are asynchronous (a request can be sent without any replies
+and vice versa).
+
+The driving idea of {\em Guis} is that the input and output protocols are
+tailored to your application. On the input side (requests from
+your application to {\em Guis}) the protocol is usually made of calls
+to specific functions defined in the initial script. On the output
+side (replies or events from {\em Guis} to your application) the
+protocol is defined by sending (thru an appropriate primitive, usually
+{\tt guis\_send}, of the scripting language) arbitrary lines to your
+application from callbacks.
+
+\subsubsection{other toolkits (Qt3)?}
+
+It would be interesting to have a similar approach with QT3. I tried,
+and leave some (bad, incomplete, not even compilable) C++ code under
+the {\tt bad\_qt\_stuff/} directory of this {\em Guis}. Feel free to
+reuse this code (under a GNU license). My main problem was lack of
+good binding to QT3 and threading problems (notably threads are nearly
+incompatible with an embedded Python).
+\subsection{Small example}
+
+For illustration purpose, suppose we have an application which
+computes the sum of 2 integers, and we want to give it a nice
+graphical interface containing two (editable) textual entry widgets, a
+quit button, and a label widget displaying the sum.
+
+\begin{figure}[h]
+\begin{center}
+\figimagebox{imgdemo}
+
+\caption{Simple example demo window}
+\end{center}
+\end{figure}
+
+\subsubsection{protocols}
+
+We have to think first about the messages sent from the application to
+{\em Guis}. We need first to {\tt start} the interface (giving some
+nice title). We will need to display a sum using {\tt displaysum} and
+to display an error message using {\tt displayerror}. And
+we need to stop the demo, thru a {\tt stopdemo} function. All these
+functions are Python functions defined in the initial script file.
+
+We also need to define the messages sent from {\em Guis} back to the
+application. We will send a plain {\tt END} for end, and a more
+complex message starting with {\tt ADD} to ask the application to make
+an addition (displaying the result with a {\tt displaysum} request.
+The {\tt ADD} message should contain the textual content of the two
+entry widgets. Since the textual content can be anything (it could
+even contain control characters like newlines) it should be encoded.
+We use a C like encoding convention, so will usually send {\tt ADD "1"
+  "3"} -or even {\tt \verb!ADD "\t1" "3"!} if the first entry starts
+with a tab\footnote{How to enter a tab character inside a Gtk entry
+  widget is left as an exercise to the reader.}. The application is in
+charge of checking that the entries contain valid numbers.
+
+The {\em Guis} server program buffers all input (python requests) and
+output (event replies), reading and writing as soon as possible.
+
+A typical exchange between the application and Guis might be as
+follow; first the application starts and sends
+
+\begin{guisrequest}
+\verb+start("pid 1234")+
+\end{guisrequest}
+
+Then {\em Guis} shows the window and let the user interact with it. Some
+user interaction makes {\em Guis} send back messages like
+
+\begin{guisreply}
+ADD "2" "5"
+\end{guisreply}
+
+
+To which the application responds with
+\begin{guisrequest}
+\verb!displaysum(2,5,7)!
+\end{guisrequest}
+
+When the user closes the window, {\em Guis} send back 
+\begin{guisreply}
+END
+\end{guisreply}
+
+To which the application responds with
+\begin{guisrequest}
+stopdemo()
+\end{guisrequest}
+
+and then exits.
+
+
+When run with the {\tt -T} flag, {\em Guis} opens a window to show the
+trace of all requests and replies (this is useful for script
+and application debugging):
+
+\begin{figure}[h]
+\begin{center}
+\figimagebox{imgtrace}
+
+\caption{Protocol trace window}
+\end{center}
+\end{figure}
+
+\subsubsection{initial Python script}
+
+We write a small Python initial script. A special trick in {\em Guis}
+is that if {\tt Guis} is invoked with a name (i.e. {\tt argv[0]} in C
+parlance) ending with {\tt -scripter} then the next (second) argument
+is the initial script name. Hence we can start our script with
+
+\begin{guisscript}
+\verb+#! /usr/bin/env pyguis-scripter+\\
+\verb+# file guisdemo_script in -*- python -*-+
+\end{guisscript}
+
+With such a trick, our initial script can be invoked by any {\tt
+  pyguis-scripter} found in our {\tt \$PATH}. We make it a symbolic
+link to the {\tt pyguis} executable.
+
+We need to tell python to use the {\tt gtk} module (provided by pygtk)
+and the {\tt guis} module (builtin inside {\tt pyguis}).
+
+\begin{guisscript}
+\verb+import gtk+\\
+\verb+import guis+
+\end{guisscript}
+
+Next, we need to define a callback used by the {\it quit} button; it
+just sends back the {\tt END} string to the application
+
+\begin{guisscript}\begin{verbatim}
+def end_cb(*args):
+    guis.guis_send("END")
+\end{verbatim}\end{guisscript}
+
+We also define a callback used when text entries are updated. It uses
+the {\tt guis.to\_guis} primitive to convert a C string to its textual
+representation but we could have used Python {\tt repr} function.
+
+We need to define the {\tt start} function, invoked by the application
+in its first request, to build the graphical widgets and connect them
+to callbacks. It first builds a window and its contained vertical box
+(using GTK2 calls in Python):
+
+\begin{guisscript}\begin{verbatim}
+def start(welcomsg):
+    global window, xent, yent, sumlab
+    window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+    window.set_title("Guis Demo")
+    vbox = gtk.VBox(gtk.FALSE,2)
+    window.add(vbox)
+\end{verbatim}\end{guisscript}
+
+Then it builds the other widgets (details deleted here, see the source
+of {\tt guisdemo\_script} file). At last, it makes the {\it quit}
+button, connect it to the {\tt end\_cb} callback, add it into {\tt
+  vbox} and show all of the {\tt window}:
+
+\begin{guisscript}\begin{verbatim}
+    # ...
+    quitbut = gtk.Button("quit")
+    quitbut.connect("clicked", end_cb)
+    vbox.add(quitbut)
+    window.show_all()
+\end{verbatim}\end{guisscript}
+
+We need to define the {\tt displaysum} function
+
+\begin{guisscript}\begin{verbatim}
+def displaysum(x,y,sum):
+    sumlab.set_markup(('<i>%d</i> + <i>%d</i>' % (x,y))
+                       + (' = <big>%d</big>' % sum))
+\end{verbatim}\end{guisscript}
+    
+We need to define the {\tt displayerror} function. To avoid
+messing the Gtk2 (pango provided) XML-like markup, we convert the
+message to its XML representation (i.e. using {\tt \verb+&lt;+}
+for {\tt <} etc...) using the {\tt guis.xml\_coded} primitive.
+
+\begin{guisscript}\begin{verbatim}
+def displayerror(message):
+    sumlab.set_markup('<b>ERROR:</b> '
+                      + (guis.xml_coded(message)))
+\end{verbatim}\end{guisscript}
+    
+A {\tt stopdemo} function is also needed (see the source file).
+
+\subsubsection{client application}
+
+We suppose the client application is written in C. You can code it in
+any language able to communicate on channels in a textual way. We
+comment here parts of the file {\tt guisdemo\_client.c}. You don't need
+to link any {\em Guis} specific library to it!
+
+We declare a big line buffer, and the requests and replies files. We
+could also use the {\tt glibc} specific {\tt getline} function which
+dynamically allocates the line buffer.
+
+\begin{applcode}\begin{verbatim}
+  char linbuf[1024];
+  FILE *toguis = stdout;
+  FILE *fromguis = stdin;
+\end{verbatim}\end{applcode}
+    
+  
+  
+At first, we want to send a request like
+{\tt \verb+start("<b>guis</b> demo")+}. Requests may start with a
+comment used to help identify them in error messages\footnote{Actually
+  requests are identified by their first line in error messages.}. 
+\begin{applcode}\begin{verbatim}
+  fprintf (toguis, "#initial start\n"
+           "start(\"pid %d\")\n\n",
+           (int) getpid ());
+  fflush (toguis);
+\end{verbatim}\end{applcode}
+
+Never forget to flush your request channel very often, and to end
+every request with two newlines.
+
+Of course we need a loop to read events (or replies) messages from
+{\em Guis} - each of them is a single (sometimes very long) line ended
+with a single newline.
+
+\begin{applcode}\begin{verbatim}
+  while (!feof (fromguis)) {
+    fgets (linbuf, sizeof (linbuf) - 1, fromguis);
+\end{verbatim}\end{applcode}
+    
+if the reply line starts with {\tt ADD} we scan it appropriately and ask
+to display a fancy line like ``{\it 2} + {\it 3} = {\large 5}''
+otherwise (bad scan because of non-numeric entries) we display
+``{\bf invalid input}''
+
+\begin{applcode}\begin{verbatim}
+    if (!strncmp (linbuf, "ADD", 3)) {
+      int x=0,  y=0,  pos=0;
+      if (sscanf (linbuf, "ADD \"%d\" \"%d\" %n", 
+                  &x, &y, &pos) > 0 && pos > 0) {
+        fprintf (toguis, "#good sum\n"
+                 "displaysum(%d,%d,%d)\n\n",
+                 x, y, x + y);
+      } else {
+        fprintf (toguis, "#bad input\n"
+                 "displayerror(\"bad input\")\n\n");
+      }
+\end{verbatim}\end{applcode}
+
+If the reply is {\tt END} we stop gently (by sending a {\tt stopdemo()}
+request and exiting): 
+\begin{applcode}\begin{verbatim}
+    } else if (!strncmp (linbuf, "END", 3)) {
+      fprintf (toguis, "#stop\n" "stopdemo()\n\n");
+      fflush (toguis);
+      sleep (1);
+      exit (0);
+    } 
+\end{verbatim}\end{applcode}
+
+After warning against unexpected input lines, we flush the request
+channel and end the loop.
+\begin{applcode}\begin{verbatim}
+    fflush (toguis);
+  }; // end of while feof
+\end{verbatim}\end{applcode}
+
+Normally the while loop should never be ended, since our guis python
+script should signal termination with {\tt END} (handled above).
+
+
+\section{Reference}
+
+\subsection{installing Guis}
+
+You need Python (2.2.x or 2.3.y from \url{http://www.python.org/}),
+GTK (2.2 or better from \url{http://www.gtk.org/}) and PyGTK (1.99.18
+or 2.0 or better from
+\url{http://www.daa.com.au/~james/software/pygtk/}) to build {\tt
+  pyguis} (the Python version of {\em Guis}). You need Ruby (1.8.x)
+from \url{http://www.ruby-lang.org/} and ruby-gnome 0.9.1 or later from
+\url{http://ruby-gnome2.sourceforge.jp/} to build {\tt ruguis} (the
+Ruby version of {\em Guis}). I built a thread-less
+Python-2.2{\footnote{I passed the -disable-threads option to Python's
+    configure script} which works with Guis. I am using GNU gcc (3.3)
+  and GNU make (3.80).  You may add a local {\tt \_local.mk} file
+  containing definitions for your installation, such as {\tt
+    PREFIX=/usr}, {\tt CC=gcc-3.3}, {\tt
+    PYTHONCFLAGS=-I/usr/include/python2.2} or {\tt
+    PYTHONLDFLAGS=-lpython2.2} {\tt RUBY=ruby} etc...  you may even
+  edit the Makefile.
+
+First configure, either with {\tt make config} or with the {\tt
+  ./Configure} script. Run it with {\tt -help} to get usage
+  information.
+
+Then run {\tt make} then {\tt make install} (which usually requires to be
+root). 
+
+You may build only the Ruby version with {\tt make ruguis} or only the
+Python version with {\tt make pyguis}.
+
+
+To run the demo, you probably need to add {\tt .} or the {\em Guis}
+source directory to your {\tt \$PATH} before running {\tt
+  guis\_demo.sh} or you can run the {\tt guisdemo\_script -p
+  guisdemo\_client -T} command. use {\tt guisdemo\_rubyscript} to run
+the Ruby version.
+
+
+\subsection{invoking Guis}
+\label{invocation}
+
+See the man page in the source distribution for complete reference of
+invocation, or invoke the binay with the {\tt --help} option.
+
+{\em Guis} is usually invoked as {\tt pyguis} command, or indirectly
+as \tt pyguis-scripter} if started by its initial script.
+
+Guis can be started in a slave fashion (after the application has
+started) by specifing its input and output channels (thru the {\tt -i}
+and {\tt -o} options). You may specify file descriptors or paths as
+channels.
+
+Guis can also be started as a master, by giving the application
+command as argument with {\tt -p}. You usually need to quote this
+argument (because of your shell) unless the command has no spaces!
+
+The {\tt -T} option is interesting to show the exchange between {\em
+  guis} and its application in a separate window. This is very useful
+  to debug your initial script or your application. 
+
+The {\tt -D} option (disabled with {\tt -DNDEBUG} compile flag) show
+lots of debugging information (to debug {\tt pyguis} itself).
+
+The {\tt -L} option writes all requests into a log file.
+
+the {\tt -I} or {\tt --input-enconding} option set the input encoding
+(as supported by GLib2 on input channels). Likewise for  {\tt -O} or {\tt --output-enconding} 
+
+\section{Guis for Python}
+
+\subsection{invocation}
+
+as usual, see section \ref{invocation} above.
+
+\subsubsection{added Python primitives}
+
+In alphabetical order, here are the names wired in the {\tt guis}
+builtin Python module. You need of course to learn and use the modules
+provided by {\tt pygtk} to actually build any GTK2 widget! You should
+not explicitly call {\tt gtk\_main\_loop} from Python, since it is is
+already called by {\tt pyguis}
+
+\subsubsection{end\_of\_input\_hook}
+
+With a callable argument, sets the hook called at end of input. Always
+return the previous hook (even without any arguments). You probably
+also need to set the end timeout using {\tt end\_timeout} below.
+
+\subsubsection{end\_timeout}
+
+Get (without arguments) or set (with an integer argument) the timeout
+in milliseconds after which {\tt pyguis} exits at end of input. Useful
+with {\tt end\_of\_input\_hook} above.
+
+\subsubsection{guis\_send}
+
+Send the string argument on the output channel to the application. The
+string should not contain control characters (this is not checked)
+otherwise the application might have trouble scanning it. A newline is
+added if needed. (You may use many Python packages to build the sent
+string; eg you could send XML stuff).
+
+\subsubsection{main\_loop\_in\_script}
+
+Get (without argument) or set (with a truth-value argument) the flag
+telling {\em Guis} that the main loop {\tt gtk\_main} was called from
+the initial script.
+
+\subsubsection{nb\_replies}
+
+Get (without arguments) the number of sent replies (event lines sent
+to application). You might set this number with an integer argument
+(but I see no reason to do this).
+
+\subsubsection{nb\_requests}
+
+Get the number of processed Python requests. You might set this number
+with an integer argument (but I see no reason to do this).
+
+\subsubsection{pipe\_check\_period}
+
+Get (without arguments) or set (with an integer argument) the period
+in milliseconds (should be 0 or 50 to 10000) to check for application
+termination (in master mode).  Useful with {\tt end\_of\_input\_hook}
+above.
+
+\subsubsection{to\_guis}
+\label{pyth:toguis}
+Convert an object (or many of them, considered as a tuple) to a string
+sendable to the application using the following algorithm:
+
+\begin{itemize}
+  
+\item if the object is string, represent it in C syntax (except that
+  double quotes are escaped as {\tt \verb+\Q+} so they are only string
+  delimiters in the converted string) , so the string made of 4
+  characters (a, tabulation, double-quote, z) is converted to the 7
+  character string {\tt \verb+"a\t\Qz"+}
+
+\item if the object is an integer, represent it in decimal notation
+  
+\item if the object is a double, represent it like in C with a {\tt
+    \#} prefix\footnote{Distinguishing floating numbers from integers
+    with a prefix should make parsing easier for the application.}, eg
+  {\tt \#3.14}
+  
+\item if the object is a tuple, convert each component using the same
+  {\tt to\_guis} builtin function and catenate each substring with
+  spaces for separation - if any component fails to be converted, the
+  entire tuple conversion fails.
+
+\item if the object has a {\tt to\_guis} attribute, fetch it: if it is
+  a string, return it, if it is callable, apply it to the object.
+
+\item if the object has a {\tt to\_guis} method, call it (without any
+  arguments except the recieving object).
+
+\item otherwise, fail
+
+\end{itemize}
+
+
+\subsubsection{xml\_coded}
+
+Quickly convert a Python string or unicode to its XML representation
+(so the 3 characters string {\tt \verb+a<b+} is converted to the 6
+characters string {\tt \verb+a&lt;b+}), escaping characters per XML
+requirements:
+
+\begin{itemize}
+\item {\tt \verb+&+} as {\tt \verb+&amp;+} 
+\item {\tt \verb+'+} as {\tt \verb+&apos;+}
+\item {\tt \verb+"+} as {\tt \verb+&quot;+} 
+\item {\tt \verb+<+} as {\tt \verb+&lt;+} 
+\item {\tt \verb+>+} as {\tt \verb+&gt;+} 
+\item other strict ASCII printable characters are kept identical
+\item all other characters including control and IsoLatin1 accentuated
+  characters like {\tt é à} are represented by a numerical entity
+  (character number in decimal) like 
+{\tt \verb+&#231;+} for the lowercase c with cedilla {\tt \verb+ç+}
+\end{itemize}
+
+The result of {\tt guis.xml\_coded} is a string with only ASCII
+printable characters (coded 32-126).
+
+
+\section{Guis with Ruby}
+\label{sec:rubyport}
+
+{\em Guis} has been ported to Ruby 1.8.
+See \url{http://www.ruby-lang.org/} for more on Ruby. The binary name
+is {\tt ruguis} (including the {\tt ruguis-scripter} trick) and has
+the same invocation as the {\tt pyguis} (Python) version. The Ruby
+port is in the file {\tt ru\_gguis.c}
+
+This port uses the {\it ruby-gnome2} binding of GTK2. See
+\url{http://ruby-gnome2.sourceforge.jp/}.
+
+The demo works in a Ruby way - it is in the {\tt guisdemo\_rubyscript}
+file and can be run as
+%
+{\tt \verb+ruguis -T -D -s guisdemo_rubyscript -p guisdemo_client+} 
+%
+(provided that {\tt .} is inside your \verb+$PATH+)
+
+
+
+
+\subsection{open questions}
+
+
+
+I don't know if a builtin module can have virtual variables (as
+defined by the {\tt rb\_define\_virtual\_variable} C function of the
+Ruby runtime).
+
+I would like to print more (e.g. the current environment in {\tt
+  debug\_extra}) but I don't know how to code it.
+
+
+\subsection{Ruby API}
+
+There is a builtin {\tt Guis} Ruby module. It contains the {\tt
+  guis\_send} primitive to send a string back to the application.
+
+{\tt \$guis\_nbreq}, {\tt \$guis\_nbsend} and {\tt \$guis\_pipecheckperiod}
+are (global) virtual variables (implemented thru {\tt
+  rb\_define\_virtual\_variable} C function).
+
+{\tt \$guis\_main\_loop\_in\_script} is a global variable which when
+set to a true value avoid calling {\tt gtk\_main} after interpreting
+the initial script (which should hence call {\tt Gtk.main}
+explicitly).
+
+Conversion to XML notation is done by the {\tt to\_xml} method added
+to the existing {\tt String} class.
+
+Conversion to a C-like notation (like {\tt to\_guis} in Python above
+\ref{pyth:toguis}) is done by the {\tt to\_guis} method with built-in
+implementations for arrays, strings, integers, floats, symbols. The
+user could add other methods to existing classes by Ruby code like
+
+
+\begin{guisscript}\begin{verbatim}
+ExistingClass.class_eval { 
+  def to_guis
+    return "result"
+  end 
+}
+\end{verbatim}\end{guisscript}
+
+
+Then end of input hook is settable with
+
+\begin{guisscript}\begin{verbatim}
+Guis::on_end_of_input do |timeout|
+  # user end input hook
+done
+\end{verbatim}\end{guisscript}
+
+To remove the end of input hook, just do
+\begin{guisscript}\begin{verbatim}
+#removing end of input hook
+Guis::on_end_of_input
+\end{verbatim}\end{guisscript}
+
+
+\section{experimental and incomplete Slang version of GUIS using slgtk}
+
+See \url{http://s-lang.org/} for the Slang interpreter. See
+\url{http://space.mit.edu/cxc/software/slang/modules/slgtk} for the
+Slgtk binding of Slang to GTK.
+
+The GUIS port to Slang is incomplete and barely tested. See the source
+code for details. Feedback is welcome.
+
+\section{Feedback}
+
+\subsection{Feedback welcome}
+
+Please send comments, criticisms, suggestions and patches to
+\mailto{basile\_NOSPAM@starynkevitch.net.invalid} (but remove the {\tt
+  \_NOSPAM} and {\tt .invalid} from the email) mentioning {\tt guis}
+in the subject line. Feel free to suggestion new features. Tell me
+about any success stories (ie Guis use) in your applications!
+
+\begin{rawhtml}
+    
+  <p>I am interested by your <a href=
+  "../showinterest.php?name=guisdoc">feedback</a> <small>(to this
+  <tt>guisdoc</tt> page)</small></p>
+
+ <form action="../interest.php" method="post">
+  Did you find this page:<br>
+
+  <input type="hidden" name="page" value="guisdoc"> 
+
+  <input type="hidden" name="rev" value="$Revision: 1.30 $"> 
+
+  <input type="radio" name="rate" value="1">Highly Interesting
+      <small>(1)</small>; &nbsp; 
+
+  <input type="radio" name="rate" value="2">Interesting 
+       <small>(2)</small>; &nbsp; 
+
+  <input type="radio" name="rate" value="3">Uninteresting
+      <small>(3)</small>; &nbsp; 
+
+  <input type="radio" name="rate" value="4">Awefully Uninteresting 
+       <small>(4)</small><br>
+       
+   <input type="submit" value="Send feedback.">
+ </form>
+
+\end{rawhtml}
+
+
+ \subsection{Change log}
+
+\begin{description}
+
+\item[version 1.6] (december 30, 2004) - minor code clean.
+
+\item[version 1.5] (may 10, 2004) - ported to Gtk2.2, added Slang
+  preliminary port (and non-working port to Perl).
+
+\item[version 1.4] (september 5, 2003) bugfix (read buffer uses {\tt
+    GString}) and added {\tt\verb+guis_main_loop_in_script+}),
+  with both Python2.2 and Python2.3 support.
+
+\item[version 1.3] (september 2, 2003) contains the experimental Ruby port
+(and warns against exception in callbacks). 
+
+{\small 
+\begin{itemize}
+\item 1.3.1 added word wrap in
+trace window, 
+\item 1.3.2 added logfiles with {\tt -L} with the Gtk.init
+requirement in user scripts for Ruby
+\item 1.3.3 {\scriptsize (september 3, 2002)} shows the versions info
+  in trace window
+\item 1.3.4 {\scriptsize (september 4, 2002)} removed the Gtk.init
+  requirement in the user initial script
+\end{itemize}}
+
+\item[version 1.2] (august 31, 2003) minor fixes: just added the {\tt
+  guis.xml\_coded} primitive and updated the demo and the
+documentation.
+
+\item[version 1.1] (august 30, 2003) made a major switch to Python using
+PyGTK previous versions used Lua).
+
+\item[versions $<= 0.3$]  (march 22, 2003) and older was Lua based
+  {\small (with a Gtk binding to Lua generated by a CommonLisp script)}
+
+\end{description}
+
+\end{document}
+

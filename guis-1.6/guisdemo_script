@@ -1,0 +1,86 @@
+#! /usr/bin/env pyguis-scripter
+# file guisdemo_script in -*- python -*-
+# $Id: guisdemo_script 1.7 Sun, 31 Aug 2003 23:24:55 +0200 basile $
+# by Basile STARYNKEVITCH
+# $ProjectHeader: Guis 1.62 Thu, 30 Dec 2004 14:14:05 +0100 basile $
+
+# the gguis.c file contain code to test if the pyguis is started as
+# pyguis-scripter; if that is the case, the next argument is the
+# Python script file. Hence the trick to run this as a /usr/bin/env
+# pyguis-scripter script (see execve man page)
+
+import gtk
+import guis
+
+
+def end_cb(*args):
+    # guis_send just sends back a string (without any encoding)
+    guis.guis_send("END")
+
+def updated_cb(*args):
+    global xent, yent
+    # to_guis transform a string in a C syntax, ie encode formfeed
+    # with \f and newline with \n etc... and add initial & final
+    # doublequote
+    guis.guis_send("ADD " + guis.to_guis(xent.get_text())
+                  + " " + guis.to_guis(yent.get_text()))
+    
+## the client application should send first a start(markup) message
+## e.g. start("hello <b>from guis</b>")
+def start(welcomsg):
+    global window, xent, yent, sumlab
+    window = gtk.Window(gtk.WINDOW_TOPLEVEL)
+    window.set_title("Guis Demo")
+    vbox = gtk.VBox(gtk.FALSE,2)
+    window.add(vbox)
+    window.connect("destroy", end_cb)
+    window.set_border_width(10)
+    label = gtk.Label()
+    label.set_markup('<b>Guis demo</b>\n' + guis.xml_coded(welcomsg))
+    vbox.add(label)
+    ## x stuff
+    xbox = gtk.HBox(gtk.FALSE,3)
+    vbox.add(xbox)
+    xlab = gtk.Label("x=")
+    xbox.add(xlab)
+    xent = gtk.Entry()
+    xent.set_text("0")
+    xent.connect("activate", updated_cb)
+    #xent.connect("changed", updated_cb)
+    xbox.add(xent)
+    ## y stuff
+    ybox = gtk.HBox(gtk.FALSE,3)
+    vbox.add(ybox)
+    ylab = gtk.Label("y=")
+    ybox.add(ylab)
+    yent = gtk.Entry()
+    yent.set_text("0")
+    yent.connect("activate", updated_cb)
+    #yent.connect("changed", updated_cb)
+    ybox.add(yent)
+    ## sum label
+    sumlab = gtk.Label("...")
+    vbox.add(sumlab)
+    ## quit button
+    quitbut = gtk.Button("quit")
+    quitbut.connect("clicked", end_cb)
+    vbox.add(quitbut)
+    ##
+    print('end of start')
+    window.show_all()
+
+def displaysum(x,y,sum):
+    sumlab.set_markup(('<i>%d</i> + <i>%d</i>' % (x,y))
+                       + (' = <big>%d</big>' % sum))
+
+def displayerror(message):
+    sumlab.set_markup('<b>ERROR:</b> '
+                      + (guis.xml_coded(message)))
+    
+
+
+def stopdemo():
+    window.hide()
+    window.destroy()
+    
+#eof $Id: guisdemo_script 1.7 Sun, 31 Aug 2003 23:24:55 +0200 basile $
