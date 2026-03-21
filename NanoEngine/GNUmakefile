@@ -52,5 +52,7 @@ _gitid.c: ne-genrate-gitid.sh | GNUmakefile
 
 nanoeng: $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
 	$(LINK.c) $< -o $@ $(LIBS)
+obj/%.c: %.o
+	$(COMPILE.c) $^ -o $@
 
 ## end of file truc-gpl/NanoEngine/GNUmakefile
