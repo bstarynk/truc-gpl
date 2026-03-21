@@ -1,9 +1,10 @@
 #!/bin/sh
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
-# copied from RefPerSys 
-# © Copyright (C) 2020 - 2025, Basile Starynkevitch and the forum@refpersys.org
-# mailing list contributors
+# copied from RefPerSys
+#
+# © Copyright (C) 2020 - 2026, Basile Starynkevitch and the
+# forum@refpersys.org mailing list contributors
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
