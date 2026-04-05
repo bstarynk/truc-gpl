@@ -27,6 +27,7 @@ export
 CC= gcc
 CFLAGS= -O -g -Wall -Wextra $(pkg-config --cflags gtk4)
 LIBS= $(pkg-config --libs gtk4)
+RM= /bin/rm -vf
 
 NE_GIT_ID:= $(shell ./ne-generate-gitid.sh)
 NE_SHORTGIT_ID:= $(shell ./ne-generate-gitid.sh -s)
@@ -54,5 +55,12 @@ nanoeng: $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
 	$(LINK.c) $< -o $@ $(LIBS)
 obj/%.c: %.o
 	$(COMPILE.c) $^ -o $@
+
+clean:
+	@echo HUMAN_SOURCES: $(HUMAN_SOURCES)
+	@echo GENERATED_SOURCES: $(GENERATED_SOURCES)
+	@echo HUMAN_OBJECTS: $(HUMAN_OBJECTS)
+	@echo GENERATED_OBJECTS: $(GENERATED_OBJECTS)
+	$(RM) $(HUMAN_OBJECTS) $(GENERATED_OBJECTS) nanoeng
 
 ## end of file truc-gpl/NanoEngine/GNUmakefile
