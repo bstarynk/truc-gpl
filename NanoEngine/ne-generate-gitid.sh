@@ -100,8 +100,8 @@ generate_c()
 {
 	getid
 	isdirty
-	printf 'const char _ne_short[]="%.12s%s";\n'  "${gitid}" "${dirty}"
-	printf 'const char _ne_git[]="%s%s";\n' "${gitid}" "${dirty}"
+	printf 'const char _ne_shortgit[]="%.12s%s";\n'  "${gitid}" "${dirty}"
+	printf 'const char _ne_fullgit[]="%s%s";\n' "${gitid}" "${dirty}"
 	printf 'const char _ne_timestamp[]="%s";\n' "$(date)"
 	printf 'const long _ne_timelong=%d;\n' "$(date +%s)"
 }

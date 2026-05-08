@@ -53,8 +53,8 @@ all: _gitid.c nanoeng
 _gitid.c: ne-generate-gitid.sh | GNUmakefile
 	./ne-generate-gitid.sh -c > $@
 
-nanoeng: $(HUMAN_OBJECTS) $(GENERATED_OBJECTS) _gitid.o
-	$(LINK.c) $< -o $@ $(LIBS)
+nanoeng: $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
+	$(LINK.c) $^ -o $@ $(LIBS)
 
 $(ALL_OBJECTS): obj/%.o: %.c
 	$(CC) -c $(CFLAGS)  $< -o $@
