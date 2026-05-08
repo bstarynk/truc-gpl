@@ -32,7 +32,7 @@ static void
 print_hello (GtkWidget *widget, gpointer data)
 {
   g_print ("Hello World widget@%p, data@%p\n", widget, data);
-} /* end print_hello */
+}				/* end print_hello */
 
 
 
@@ -43,6 +43,8 @@ activate (GtkApplication *app, gpointer user_data)
   GtkWidget *button = NULL;
   GtkWidget *box = NULL;
 
+  if (ne_debug)
+    g_print ("activate app@%p user_data@%p\n", app, user_data);
   window = gtk_application_window_new (app);
   gtk_window_set_title (GTK_WINDOW (window), "Window");
   gtk_window_set_default_size (GTK_WINDOW (window), 200, 200);
@@ -62,30 +64,47 @@ activate (GtkApplication *app, gpointer user_data)
   gtk_box_append (GTK_BOX (box), button);
 
   gtk_window_present (GTK_WINDOW (window));
-} /* end activate */
+}				/* end activate */
 
+static void
+handle_command_line (GtkApplication *app, GApplicationCommandLine *cmdlin)
+{
+  gchar **argv = NULL;
+  int argc = 0;
+  g_assert (app != NULL);
+  argv = g_application_command_line_get_arguments (cmdlin, &argc);
+  if (ne_debug)
+    {
+      for (int aix = 0; aix < argc; aix++)
+	g_print ("cmdlin#%d: %s\n", aix, argv[aix]);
+    };
+}				/* end handle_command_line */
 
 
 static void
-process_program_arguments(int argc, char**argv)
+process_program_arguments (int argc, char **argv)
 {
   /// Debugging GTK can also be provided by the G_DEBUG environment
   /// variable.  See https://docs.gtk.org/glib/running.html
-  if (argc>1 && !strcmp(argv[1], "--version"))
+  if (argc > 1 && !strcmp (argv[1], "--version"))
     {
       extern const char _ne_shortgit[];
       //extern const char _ne_fullgit[];
       extern const char _ne_timestamp[];
       //extern const long _ne_timelong;
-      printf("%s version git %s built %s;\n",
-	     ne_progname, _ne_shortgit, _ne_timestamp);
-      printf("see NanoEngine under github.com/bstarynk/truc-gpl\n");
-      exit(0);
+      printf ("%s version git %s built %s;\n",
+	      ne_progname, _ne_shortgit, _ne_timestamp);
+      printf ("see NanoEngine under github.com/bstarynk/truc-gpl\n");
+      exit (0);
     };
   for (int ix = 1; ix < argc; ix++)
     if (!strcmp (argv[ix], "-D") || !strcmp (argv[ix], "--debug"))
-      ne_debug = true;
-} /* ed process_program_arguments */
+      {
+	ne_debug = true;
+	printf ("%s enables debugging\n", ne_progname);
+      }
+}				/* ed process_program_arguments */
+
 
 int
 main (int argc, char **argv)
@@ -96,19 +115,21 @@ main (int argc, char **argv)
   ne_selfhandle = dlopen (NULL, RTLD_NOW);
   if (!ne_selfhandle)
     g_error ("dlopen self failed %s", dlerror ());
-  process_program_arguments(argc, argv);
+  process_program_arguments (argc, argv);
   {
     const char *gd = getenv ("G_DEBUG");
     if (gd && gd[0])
       ne_debug = true;
   };
   app = gtk_application_new ("net.starynkevitch.nanoengine",
-			     G_APPLICATION_DEFAULT_FLAGS);
+			     G_APPLICATION_HANDLES_COMMAND_LINE);
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
+  g_signal_connect (app, "command-line", G_CALLBACK (handle_command_line),
+		    NULL);
   status = g_application_run (G_APPLICATION (app), argc, argv);
   g_object_unref (app);
 
   return status;
-} /* end main */
+}				/* end main */
 
 // end of file truc-gpl/NanoEngine/ne_main.c
