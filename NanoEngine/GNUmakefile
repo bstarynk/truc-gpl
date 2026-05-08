@@ -25,8 +25,8 @@ export
 
 
 CC= gcc
-CFLAGS= -O -g -Wall -Wextra $(pkg-config --cflags gtk4)
-LIBS= $(pkg-config --libs gtk4)
+CFLAGS= -O -g -Wall -Wextra $(shell pkg-config --cflags gtk4)
+LIBS= $(shell pkg-config --libs gtk4)
 RM= /bin/rm -vf
 
 NE_GIT_ID:= $(shell ./ne-generate-gitid.sh)
@@ -42,7 +42,7 @@ GENERATED_SOURCES= $(wildcard _*.c)
 
 HUMAN_OBJECTS=  $(patsubst %.c,obj/%.o, $(HUMAN_SOURCES))
 GENERATED_OBJECTS= $(patsubst %.c,obj/%.o, $(GENERATED_SOURCES))
-
+ALL_OBJECTS= $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
 
 .PHONY: all clean
 
@@ -53,8 +53,9 @@ _gitid.c: ne-genrate-gitid.sh | GNUmakefile
 
 nanoeng: $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
 	$(LINK.c) $< -o $@ $(LIBS)
-obj/%.c: %.o
-	$(COMPILE.c) $^ -o $@
+
+$(ALL_OBJECTS): obj/%.o: %.c
+	$(CC) -c $(CFLAGS)  $< -o $@
 
 clean:
 	@echo HUMAN_SOURCES: $(HUMAN_SOURCES)
@@ -62,5 +63,6 @@ clean:
 	@echo HUMAN_OBJECTS: $(HUMAN_OBJECTS)
 	@echo GENERATED_OBJECTS: $(GENERATED_OBJECTS)
 	$(RM) $(HUMAN_OBJECTS) $(GENERATED_OBJECTS) nanoeng
+	$(RM) core*
 
 ## end of file truc-gpl/NanoEngine/GNUmakefile

@@ -19,7 +19,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>
 //
-//   This is from libgtk-4 example-1.c#include <gtk/gtk.h>
+//   This is from libgtk-4 example-1.c
+
+#include <gtk/gtk.h>
 
 static void
 print_hello (GtkWidget *widget,
@@ -49,7 +51,8 @@ activate (GtkApplication *app,
   button = gtk_button_new_with_label ("Hello World");
 
   g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
-  g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_window_destroy), window);
+  g_signal_connect_swapped (button, "clicked",
+			    G_CALLBACK (gtk_window_destroy), window);
 
   gtk_box_append (GTK_BOX (box), button);
 
@@ -63,7 +66,7 @@ main (int    argc,
   GtkApplication *app;
   int status;
 
-  app = gtk_application_new ("net.starynkevitch/nano_engine",
+  app = gtk_application_new ("net.starynkevitch.nanoengine",
 			     G_APPLICATION_DEFAULT_FLAGS);
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
   status = g_application_run (G_APPLICATION (app), argc, argv);
