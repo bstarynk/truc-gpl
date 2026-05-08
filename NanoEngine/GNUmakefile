@@ -39,6 +39,8 @@ NE_HOMETMP := $(shell echo '$$HOME/tmp')
 HUMAN_SOURCES= $(wildcard ne_*.c)
 HUMAN_HEADERS= $(wildcard ne_*.h)
 GENERATED_SOURCES= $(wildcard _*.c)
+PLUGIN_SOURCES= $(wildcard plugins/*.c)
+PLUGIN_SHARED_OBJECTS=  $(patsubst %.c,plugins/%.so, $(PLUGIN_SOURCES))
 
 HUMAN_OBJECTS=  $(patsubst %.c,obj/%.o, $(HUMAN_SOURCES))
 GENERATED_OBJECTS= $(patsubst %.c,obj/%.o, $(GENERATED_SOURCES))
@@ -57,12 +59,16 @@ nanoeng: $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
 $(ALL_OBJECTS): obj/%.o: %.c
 	$(CC) -c $(CFLAGS)  $< -o $@
 
+$(PLUGIN_SHARED_OBJECTS): plugins/%.so: plugins/%.c
+	$(CC) -c $(CFLAGS) -fPIC -shared $< -o $@
+
 clean:
 	@echo HUMAN_SOURCES: $(HUMAN_SOURCES)
 	@echo GENERATED_SOURCES: $(GENERATED_SOURCES)
 	@echo HUMAN_OBJECTS: $(HUMAN_OBJECTS)
 	@echo GENERATED_OBJECTS: $(GENERATED_OBJECTS)
 	$(RM) $(HUMAN_OBJECTS) $(GENERATED_OBJECTS) nanoeng
+	$(RM) plugins/*.so
 	$(RM) core*
 
 ## end of file truc-gpl/NanoEngine/GNUmakefile
