@@ -22,21 +22,21 @@
 //   This is from libgtk-4 example-1.c
 
 #include <gtk/gtk.h>
+bool ne_debug;
+char *ne_progname;
 
 static void
-print_hello (GtkWidget *widget,
-             gpointer   data)
+print_hello (GtkWidget *widget, gpointer data)
 {
-  g_print ("Hello World\n");
+  g_print ("Hello World widget@%p, data@%p\n", widget, data);
 }
 
 static void
-activate (GtkApplication *app,
-          gpointer        user_data)
+activate (GtkApplication *app, gpointer user_data)
 {
-  GtkWidget *window;
-  GtkWidget *button;
-  GtkWidget *box;
+  GtkWidget *window = NULL;
+  GtkWidget *button = NULL;
+  GtkWidget *box = NULL;
 
   window = gtk_application_window_new (app);
   gtk_window_set_title (GTK_WINDOW (window), "Window");
@@ -60,12 +60,21 @@ activate (GtkApplication *app,
 }
 
 int
-main (int    argc,
-      char **argv)
+main (int argc, char **argv)
 {
-  GtkApplication *app;
-  int status;
-
+  GtkApplication *app = NULL;
+  int status = -1;
+  ne_progname = argv[0];
+  /// Debugging GTK can be provided by the G_DEBUG environment variable
+  /// See https://docs.gtk.org/glib/running.html
+  for (int ix = 1; ix < argc; ix++)
+    if (!strcmp (argv[ix], "-D") || !strcmp (argv[ix], "--debug"))
+      ne_debug = true;
+  {
+    const char *gd = getenv ("G_DEBUG");
+    if (gd && gd[0])
+      ne_debug = true;
+  };
   app = gtk_application_new ("net.starynkevitch.nanoengine",
 			     G_APPLICATION_DEFAULT_FLAGS);
   g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
