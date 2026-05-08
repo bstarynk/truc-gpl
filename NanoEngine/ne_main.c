@@ -19,11 +19,14 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>
 //
-//   This is from libgtk-4 example-1.c
-
+//   This was from libgtk-4 example-1.c
+#include <dlfcn.h>
 #include <gtk/gtk.h>
+#include <stdlib.h>
+#include <unistd.h>
 bool ne_debug;
 char *ne_progname;
+void *ne_selfhandle;
 
 static void
 print_hello (GtkWidget *widget, gpointer data)
@@ -65,6 +68,9 @@ main (int argc, char **argv)
   GtkApplication *app = NULL;
   int status = -1;
   ne_progname = argv[0];
+  ne_selfhandle = dlopen (NULL, RTLD_NOW);
+  if (!ne_selfhandle)
+    g_error ("dlopen self failed %s", dlerror ());
   /// Debugging GTK can be provided by the G_DEBUG environment variable
   /// See https://docs.gtk.org/glib/running.html
   for (int ix = 1; ix < argc; ix++)

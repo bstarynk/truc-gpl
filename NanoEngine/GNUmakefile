@@ -48,12 +48,12 @@ ALL_OBJECTS= $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
 
 .PHONY: all clean
 
-all: nanoeng
+all: _gitid.c nanoeng
 
-_gitid.c: ne-genrate-gitid.sh | GNUmakefile
-	./ne-generate-gitid.sh -c
+_gitid.c: ne-generate-gitid.sh | GNUmakefile
+	./ne-generate-gitid.sh -c > $@
 
-nanoeng: $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
+nanoeng: $(HUMAN_OBJECTS) $(GENERATED_OBJECTS) _gitid.o
 	$(LINK.c) $< -o $@ $(LIBS)
 
 $(ALL_OBJECTS): obj/%.o: %.c
