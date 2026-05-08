@@ -78,6 +78,8 @@ handle_command_line (GtkApplication *app, GApplicationCommandLine *cmdlin)
       for (int aix = 0; aix < argc; aix++)
 	g_print ("cmdlin#%d: %s\n", aix, argv[aix]);
     };
+  g_object_unref(cmdlin);
+  ///  g_strfreev(argv);
 }				/* end handle_command_line */
 
 
