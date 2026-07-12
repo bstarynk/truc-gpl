@@ -28,7 +28,8 @@ CC= gcc
 CFLAGS= -O -g -Wall -Wextra $(shell pkg-config --cflags gtk4)
 LIBS= $(shell pkg-config --libs gtk4)
 RM= /bin/rm -vf
-
+# see carburetta.com
+CARBURETTA?= carburetta
 NE_GIT_ID:= $(shell ./ne-generate-gitid.sh)
 NE_SHORTGIT_ID:= $(shell ./ne-generate-gitid.sh -s)
 NE_HOST := $(shell /bin/hostname -f)
@@ -38,7 +39,7 @@ NE_ATSHARP := $(shell printf '@#')
 NE_HOMETMP := $(shell echo '$$HOME/tmp')
 HUMAN_SOURCES= $(wildcard ne_*.c)
 HUMAN_HEADERS= $(wildcard ne_*.h)
-GENERATED_SOURCES= $(wildcard _*.c)
+GENERATED_SOURCES= $(sort $(wildcard _*.c) _ne_parscarb.c)
 PLUGIN_SOURCES= $(wildcard plugins/*.c)
 PLUGIN_SHARED_OBJECTS=  $(patsubst %.c,plugins/%.so, $(PLUGIN_SOURCES))
 
@@ -48,13 +49,22 @@ ALL_OBJECTS= $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
 
 .PHONY: all clean
 
-all: _gitid.c nanoeng
+all: _gitid.c _ne_parscarb.c nanoeng
 
 _gitid.c: ne-generate-gitid.sh | GNUmakefile
 	./ne-generate-gitid.sh -c > $@
 
-nanoeng: $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
-	$(LINK.c) $^ -o $@ $(LIBS)
+_ne_parscarb.c: ne_parscarb.cbrt | GNUmakefile
+	$(CARBURETTA)  $< -n -c > $@
+
+nanoeng: GNUmakefile
+	$(MAKE) $(GENERATED_SOURCES)
+	$(MAKE) $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
+	@echo nanoeng HUMAN_SOURCES: $(HUMAN_SOURCES)
+	@echo nanoeng GENERATED_SOURCES: $(GENERATED_SOURCES)
+	@echo nanoeng HUMAN_OBJECTS: $(HUMAN_OBJECTS)
+	@echo nanoeng GENERATED_OBJECTS: $(GENERATED_OBJECTS)
+	$(LINK.c) $(HUMAN_OBJECTS) $(GENERATED_OBJECTS) -o $@ $(LIBS)
 
 $(ALL_OBJECTS): obj/%.o: %.c
 	$(CC) -c $(CFLAGS)  $< -o $@

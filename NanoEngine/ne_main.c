@@ -72,6 +72,7 @@ handle_command_line (GtkApplication *app, GApplicationCommandLine *cmdlin)
   gchar **argv = NULL;
   int argc = 0;
   g_assert (app != NULL);
+  g_application_hold(G_APPLICATION(app));
   argv = g_application_command_line_get_arguments (cmdlin, &argc);
   if (ne_debug)
     {
