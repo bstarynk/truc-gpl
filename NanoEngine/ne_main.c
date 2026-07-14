@@ -27,7 +27,7 @@ bool ne_debug;
 char *ne_progname;
 void *ne_selfhandle;
 
-void ne_fatal_at(const char*fil, int lin);
+void ne_fatal_at (const char *fil, int lin);
 #define NE_FATAL_AT_BIS(Fil,Lin,Fmt,...) do {	\
   fprintf(stderr, "%s:%d:", (Fil), (Lin));	\
   fprintf(stderr,Fmt,##__VA_ARGS__);		\
@@ -38,8 +38,8 @@ void ne_fatal_at(const char*fil, int lin);
 #define NE_FATAL_AT(Fmt,...) NE_FATAL_AT_BIS(__FILE__,__LINE__,Fmt,\
 					     ##__VA_ARGS__);
 #define NE_FATAL(Fmt,...) NE_FATAL_AT(Fmt,##__VA_ARGS__);
-static void
-process_program_arguments (int argc, char **argv)
+void
+ne_process_program_arguments (int argc, char **argv)
 {
   /// Debugging GTK can also be provided by the G_DEBUG environment
   /// variable.  See https://docs.gtk.org/glib/running.html
@@ -60,15 +60,15 @@ process_program_arguments (int argc, char **argv)
 	ne_debug = true;
 	printf ("%s enables debugging\n", ne_progname);
       }
-}				/* ed process_program_arguments */
+}				/* end ne_process_program_arguments */
 
 void
-ne_fatal_at(const char*fil, int lin)
+ne_fatal_at (const char *fil, int lin)
 {
-  assert(fil != NULL);
-  assert(lin>0);
+  assert (fil != NULL);
+  assert (lin > 0);
   asm volatile ("nop; nop; nop; nop");
-} /* end ne_fatal_at */
+}				/* end ne_fatal_at */
 
 int
 main (int argc, char **argv)
@@ -77,8 +77,8 @@ main (int argc, char **argv)
   ne_progname = argv[0];
   ne_selfhandle = dlopen (NULL, RTLD_NOW);
   if (!ne_selfhandle)
-    NE_FATAL("failed to dlopen self handle: %s", stderror(errno));
-  process_program_arguments (argc, argv);
+    NE_FATAL ("failed to dlopen self handle: %s", stderror (errno));
+  ne_process_program_arguments (argc, argv);
 
   return status;
 }				/* end main */
