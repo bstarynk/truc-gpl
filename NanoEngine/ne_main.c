@@ -19,71 +19,25 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>
 //
-//   This was from libgtk-4 example-1.c
 #include <dlfcn.h>
-#include <gtk/gtk.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <readline/readline.h>
 bool ne_debug;
 char *ne_progname;
 void *ne_selfhandle;
 
-static void
-print_hello (GtkWidget *widget, gpointer data)
-{
-  g_print ("Hello World widget@%p, data@%p\n", widget, data);
-}				/* end print_hello */
-
-
-
-static void
-activate (GtkApplication *app, gpointer user_data)
-{
-  GtkWidget *window = NULL;
-  GtkWidget *button = NULL;
-  GtkWidget *box = NULL;
-
-  if (ne_debug)
-    g_print ("activate app@%p user_data@%p\n", app, user_data);
-  window = gtk_application_window_new (app);
-  gtk_window_set_title (GTK_WINDOW (window), "Window");
-  gtk_window_set_default_size (GTK_WINDOW (window), 200, 200);
-
-  box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-  gtk_widget_set_halign (box, GTK_ALIGN_CENTER);
-  gtk_widget_set_valign (box, GTK_ALIGN_CENTER);
-
-  gtk_window_set_child (GTK_WINDOW (window), box);
-
-  button = gtk_button_new_with_label ("Hello World");
-
-  g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
-  g_signal_connect_swapped (button, "clicked",
-			    G_CALLBACK (gtk_window_destroy), window);
-
-  gtk_box_append (GTK_BOX (box), button);
-
-  gtk_window_present (GTK_WINDOW (window));
-}				/* end activate */
-
-static void
-handle_command_line (GtkApplication *app, GApplicationCommandLine *cmdlin)
-{
-  gchar **argv = NULL;
-  int argc = 0;
-  g_assert (app != NULL);
-  g_application_hold(G_APPLICATION(app));
-  argv = g_application_command_line_get_arguments (cmdlin, &argc);
-  if (ne_debug)
-    {
-      for (int aix = 0; aix < argc; aix++)
-	g_print ("cmdlin#%d: %s\n", aix, argv[aix]);
-    };
-  g_object_unref(cmdlin);
-  ///  g_strfreev(argv);
-}				/* end handle_command_line */
-
-
+void ne_fatal_at(const char*fil, int lin);
+#define NE_FATAL_AT_BIS(Fil,Lin,Fmt,...) do {	\
+  fprintf(stderr, "%s:%d:", (Fil), (Lin));	\
+  fprintf(stderr,Fmt,##__VA_ARGS__);		\
+  fflush(NULL);					\
+  ne_fatal_at((Fil),(Lin));			\
+  abort();					\
+} while (0)
+#define NE_FATAL_AT(Fmt,...) NE_FATAL_AT_BIS(__FILE__,__LINE__,Fmt,\
+					     ##__VA_ARGS__);
+#define NE_FATAL(Fmt,...) NE_FATAL_AT(Fmt,##__VA_ARGS__);
 static void
 process_program_arguments (int argc, char **argv)
 {
@@ -108,29 +62,23 @@ process_program_arguments (int argc, char **argv)
       }
 }				/* ed process_program_arguments */
 
+void
+ne_fatal_at(const char*fil, int lin)
+{
+  assert(fil != NULL);
+  assert(lin>0);
+  asm volatile ("nop; nop; nop; nop");
+} /* end ne_fatal_at */
 
 int
 main (int argc, char **argv)
 {
-  GtkApplication *app = NULL;
   int status = -1;
   ne_progname = argv[0];
   ne_selfhandle = dlopen (NULL, RTLD_NOW);
   if (!ne_selfhandle)
-    g_error ("dlopen self failed %s", dlerror ());
+    NE_FATAL("failed to dlopen self handle: %s", stderror(errno));
   process_program_arguments (argc, argv);
-  {
-    const char *gd = getenv ("G_DEBUG");
-    if (gd && gd[0])
-      ne_debug = true;
-  };
-  app = gtk_application_new ("net.starynkevitch.nanoengine",
-			     G_APPLICATION_HANDLES_COMMAND_LINE);
-  g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
-  g_signal_connect (app, "command-line", G_CALLBACK (handle_command_line),
-		    NULL);
-  status = g_application_run (G_APPLICATION (app), argc, argv);
-  g_object_unref (app);
 
   return status;
 }				/* end main */

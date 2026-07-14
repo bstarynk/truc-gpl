@@ -25,8 +25,9 @@ export
 
 
 CC= gcc
-CFLAGS= -O -g -Wall -Wextra $(shell pkg-config --cflags gtk4)
-LIBS= $(shell pkg-config --libs gtk4)
+PACKAGES= termcap readline
+CFLAGS= -O -g -Wall -Wextra $(shell pkg-config --cflags $(PACKAGES))
+LIBS= $(shell pkg-config --libs $(PACKAGES))
 RM= /bin/rm -vf
 # see carburetta.com
 CARBURETTA?= carburetta
@@ -64,7 +65,8 @@ nanoeng: GNUmakefile
 	@echo nanoeng GENERATED_SOURCES: $(GENERATED_SOURCES)
 	@echo nanoeng HUMAN_OBJECTS: $(HUMAN_OBJECTS)
 	@echo nanoeng GENERATED_OBJECTS: $(GENERATED_OBJECTS)
-	$(LINK.c) $(HUMAN_OBJECTS) $(GENERATED_OBJECTS) -o $@ $(LIBS)
+	$(LINK.c) -L/usr/local/lib -Wl,-rpath,/usr/local/lib \
+              $(HUMAN_OBJECTS) $(GENERATED_OBJECTS) -o $@ $(LIBS)
 
 $(ALL_OBJECTS): obj/%.o: %.c
 	$(CC) -c $(CFLAGS)  $< -o $@
@@ -80,5 +82,7 @@ clean:
 	$(RM) $(HUMAN_OBJECTS) $(GENERATED_OBJECTS) nanoeng
 	$(RM) plugins/*.so
 	$(RM) core*
+	$(RM) *~
+	$(RM) *.orig
 
 ## end of file truc-gpl/NanoEngine/GNUmakefile
