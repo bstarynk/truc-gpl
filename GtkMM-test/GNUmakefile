@@ -29,16 +29,21 @@ export
 CXX?= g++
 
 PACKAGES= gtkmm-4.0
-CFLAGS= -O -g -Wall -Wextra $(shell pkg-config --cflags $(PACKAGES))
+SHORTGITID=$(shell ../truc-generate-gitid.sh -s)
+CFLAGS= -O -g -std=gnu++17 -Wall -Wextra $(shell pkg-config --cflags $(PACKAGES))
+CFLAGS+= -DSHORT_GITID=\"$(SHORTGITID)\"
 LIBS= $(shell pkg-config --libs $(PACKAGES))
 
 CXXFILES= $(wildcard [a-z]*.cc)
 OBJECTS= $(patsubst %.cc, %.o, $(CXXFILES))
 
-all: gtkmm-basile
+all: gtkmm-basile | GNUmakefile
 
-gtkmm-basile: $(OBJECTS)
-
+gtkmm-basile: $(OBJECTS) 
+	$(CXX) $(OBJECTS) $(LIBS) -o $@
 
 clean:
 	$(RM) *.o *.so *~
+
+main.o: main.cc gtkmm-basile.hh
+	$(CXX) $(CFLAGS) -c $< -o $@

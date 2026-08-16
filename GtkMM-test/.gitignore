@@ -1,0 +1,4 @@
+# fichier .gitignore 
+*.o
+gtkmm-basile
+*~
