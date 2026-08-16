@@ -31,12 +31,18 @@
 
 #include <unistd.h>
 #include <stdlib.h>
+#include <iostream>
 #include <gtkmm.h>
 
 /// see https://gnome.pages.gitlab.gnome.org/gtkmm-documentation/chapter-basics.html#sec-basics-simple-example
-class BsGtk_Window : public Gtk::Window 
+class BsGtk_Window : public Gtk::Window
 {
 public:
   BsGtk_Window();
 }; // end class BsGtk_Window
+
+class BsGtk_Application : public Gtk::Application
+{
+  virtual int run (int argc, char**argv);
+};      // end class BsGtk_Application
 #endif /*GTKMM_BASILE_INCLUDED*/

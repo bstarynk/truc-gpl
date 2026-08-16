@@ -35,7 +35,7 @@ BsGtk_Window::BsGtk_Window()
 int
 main(int argc, char* argv[])
 {
-  auto app = Gtk::Application::create("truc-gpl.GtkMM-test");
+  auto app = BsGtk_Application::create("truc-gpl.GtkMM-test");
 
   return app->make_window_and_run<BsGtk_Window>(argc, argv);
 }

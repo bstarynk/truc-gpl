@@ -43,7 +43,10 @@ gtkmm-basile: $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LIBS) -o $@
 
 clean:
-	$(RM) *.o *.so *~
+	$(RM) *.o *.so *~ *.orig
 
 main.o: main.cc gtkmm-basile.hh
+	$(CXX) $(CFLAGS) -c $< -o $@
+
+app.o: app.cc gtkmm-basile.hh
 	$(CXX) $(CFLAGS) -c $< -o $@
