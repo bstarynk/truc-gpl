@@ -3,8 +3,7 @@
 #
 # copied from RefPerSys
 #
-# © Copyright (C) 2020 - 2026, Basile Starynkevitch and the
-# forum@refpersys.org mailing list contributors
+# © Copyright (C) 2020 - 2026, Basile Starynkevitch
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,13 +28,13 @@ license()
 
 usage()
 {
-	echo "usage: ./rps-generate-gitid.sh [-hlsv]"
+	echo "usage: ./ne-generate-gitid.sh [-hlsv]"
 	echo "options:"
 	echo "  -h  show usage"
 	echo "  -l  show license" 
 	echo "  -s  print short git ID" 
 	echo "  -v  show version"
-	echo "  -v  generate c file"
+	echo "  -c  generate c file"
 }
 
 version()
