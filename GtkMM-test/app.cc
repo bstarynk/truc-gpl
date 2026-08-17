@@ -35,3 +35,10 @@ BsGtk_Application::run(int argc, char**argv)
   return r;
 } // end BsGtk_Application::run
 
+
+/****************
+ **                           for Emacs...
+ ** Local Variables: ;;
+ ** compile-command: "make -C $TRUCGPL_DIR/GtkMM-test" ;;
+ ** End: ;;
+ ****************/

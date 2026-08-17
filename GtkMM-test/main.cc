@@ -25,6 +25,9 @@
 
 extern "C" const char bsgtk_main_git[];
 const char bsgtk_main_git[] = SHORT_GITID;
+const char* bsgtk_prog_name=nullptr;
+bool bsgtk_debug;
+
 
 BsGtk_Window::BsGtk_Window()
 {
@@ -32,11 +35,35 @@ BsGtk_Window::BsGtk_Window()
   set_default_size(600, 200);
 }
 
+static void
+bsgtk_prog_args(int argc, char**argv)
+{
+  bsgtk_prog_name = argv[0];
+  for (int aix=1; aix<argc; aix++) {
+    char*curarg = argv[aix];
+    if (!strcmp(curarg, "--help")) {
+    }
+    else if (!strcmp(curarg, "--version")) {
+    }
+    else if (!strcmp(curarg, "-D") || !strcmp(curarg, "--debug")) {
+    }
+  }
+} // end bsgtk_prog_args
+
 int
 main(int argc, char* argv[])
 {
+  bsgtk_prog_args(argc, argv);
   auto app = BsGtk_Application::create("truc-gpl.GtkMM-test");
 
   return app->make_window_and_run<BsGtk_Window>(argc, argv);
 }
 
+/****************
+ **                           for Emacs...
+ ** Local Variables: ;;
+ ** compile-command: "make -C $TRUCGPL_DIR/GtkMM-test" ;;
+ ** End: ;;
+ ****************/
+
+//// end of file GTKmm-test/main.cc

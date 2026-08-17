@@ -34,6 +34,10 @@
 #include <iostream>
 #include <gtkmm.h>
 
+extern "C" bool bsgtk_debug;
+extern "C" char* bsgtk_prog_name;
+extern "C" void* bsgtk_dlh;
+
 /// see https://gnome.pages.gitlab.gnome.org/gtkmm-documentation/chapter-basics.html#sec-basics-simple-example
 class BsGtk_Window : public Gtk::Window
 {
@@ -45,4 +49,14 @@ class BsGtk_Application : public Gtk::Application
 {
   virtual int run (int argc, char**argv);
 };      // end class BsGtk_Application
+
+
+
+/****************
+ **                           for Emacs...
+ ** Local Variables: ;;
+ ** compile-command: "make -C $TRUCGPL_DIR/GtkMM-test" ;;
+ ** End: ;;
+ ****************/
+
 #endif /*GTKMM_BASILE_INCLUDED*/
