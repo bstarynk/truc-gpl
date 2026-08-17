@@ -28,6 +28,9 @@
 #error undefined SHORT_GITID in compilation command
 #endif
 
+#ifndef BSGTK_BASENAME
+#error undefine BSGTK_BASENAME in compilation command
+#endif
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -51,7 +54,40 @@ class BsGtk_Application : public Gtk::Application
 };      // end class BsGtk_Application
 
 
+#define BSGTK_DEBUG_LOG_AT(Fname,Line,Log)   do	\
+  {						\
+    if (bsgtk_debug)				\
+      {						\
+        std::ostringstream _logstream_##Line;	\
+        _logstream_##Line << Log << std::flush;	\
+	std::clog << _logstream_##Line.str()	\
+		  << std::endl;			\
+      }						\
+  }						\
+while (0)
 
+#define BSGTK_DEBUG_LOG_AT_BIS(fname, fline, logmsg)  \
+   BSGTK_DEBUG_LOG_AT(fname, fline, logmsg)
+
+/// example of usage: BSGTK_DEBUG_LOG("x=" << x) related to BSGTK_DEBUG_MISC
+#define BSGTK_DEBUG_LOG(logmsg) \
+  BSGTK_DEBUG_LOG_AT_BIS(__FILE__, __LINE__,logmsg)
+
+
+/// sometimes we need a unique breakpoint
+#define BSGTK_UNIQUE_BREAKPOINT_AT(Fil,Lin,Cnt) do {    \
+    asm volatile ("nop; nop; nop; nop; nop; nop; nop;\n");  \
+    asm volatile ("__" BSGTK_BASENAME "_brk_" #Lin "_c" #Cnt  \
+      ": nop; nop\n");        \
+    asm volatile ("nop; nop; nop; nop; nop; nop; nop;\n");  \
+    asm volatile ("nop; nop; nop; nop; nop; nop; nop;\n");  \
+ } while(0)
+
+#define BSGTK_UNIQUE_BREAKPOINT_AT_BIS(Fil,Lin,Cnt) \
+  BSGTK_UNIQUE_BREAKPOINT_AT(Fil,Lin,Cnt)
+
+#define BSGTK_UNIQUE_BREAKPOINT() \
+  BSGTK_UNIQUE_BREAKPOINT_AT_BIS(__FILE__,__LINE__,__COUNTER__)
 /****************
  **                           for Emacs...
  ** Local Variables: ;;

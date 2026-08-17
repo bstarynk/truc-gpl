@@ -26,6 +26,9 @@
 extern "C" const char bsgtk_app_git[];
 const char bsgtk_app_git[] = SHORT_GITID;
 
+extern "C" const char bsgtk_app_basename[];
+const char bsgtk_app_basename[] = BSGTK_BASENAME;
+
 int
 BsGtk_Application::run(int argc, char**argv)
 {

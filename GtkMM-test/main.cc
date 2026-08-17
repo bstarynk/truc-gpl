@@ -46,6 +46,7 @@ bsgtk_prog_args(int argc, char**argv)
     else if (!strcmp(curarg, "--version")) {
     }
     else if (!strcmp(curarg, "-D") || !strcmp(curarg, "--debug")) {
+      bsgtk_debug = true;
     }
   }
 } // end bsgtk_prog_args
@@ -55,7 +56,7 @@ main(int argc, char* argv[])
 {
   bsgtk_prog_args(argc, argv);
   auto app = BsGtk_Application::create("truc-gpl.GtkMM-test");
-
+  BSGTK_DEBUG_LOG("main avec app=" << app << " git=" << bsgtk_main_git);
   return app->make_window_and_run<BsGtk_Window>(argc, argv);
 }
 

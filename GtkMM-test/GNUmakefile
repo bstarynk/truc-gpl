@@ -39,14 +39,18 @@ OBJECTS= $(patsubst %.cc, %.o, $(CXXFILES))
 
 all: gtkmm-basile | GNUmakefile
 
-gtkmm-basile: $(OBJECTS) 
+gtkmm-basile: $(OBJECTS) | GNUmakefile
 	$(CXX) $(OBJECTS) $(LIBS) -o $@
 
 clean:
 	$(RM) *.o *.so *~ *.orig
 
-main.o: main.cc gtkmm-basile.hh
-	$(CXX) $(CFLAGS) -c $< -o $@
+%.o: %.cc gtkmm-basile.hh | GNUmakefile
+	$(CXX) -DBSGTK_BASENAME=\"$(basename $<)\" \
+	   $(CFLAGS) -c $< -o $@
 
-app.o: app.cc gtkmm-basile.hh
-	$(CXX) $(CFLAGS) -c $< -o $@
+
+%.so: %.cc gtkmm-basile.hh | GNUmakefile
+	$(CXX) -DBSGTK_BASENAME=\"$(basename $<)\" -fPIC -shared \
+	   $(CFLAGS) -c $< -o $@
+
