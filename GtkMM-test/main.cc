@@ -39,22 +39,29 @@ static void
 bsgtk_prog_args(int argc, char**argv)
 {
   bsgtk_prog_name = argv[0];
-  for (int aix=1; aix<argc; aix++) {
-    char*curarg = argv[aix];
-    if (!strcmp(curarg, "--help")) {
+  BSGTK_UNIQUE_BREAKPOINT();
+  for (int aix=1; aix<argc; aix++)
+    {
+      char*curarg = argv[aix];
+      if (!strcmp(curarg, "--help"))
+        {
+        }
+      else if (!strcmp(curarg, "--version"))
+        {
+        }
+      else if (!strcmp(curarg, "-D") || !strcmp(curarg, "--debug"))
+        {
+          bsgtk_debug = true;
+        }
     }
-    else if (!strcmp(curarg, "--version")) {
-    }
-    else if (!strcmp(curarg, "-D") || !strcmp(curarg, "--debug")) {
-      bsgtk_debug = true;
-    }
-  }
 } // end bsgtk_prog_args
 
 int
 main(int argc, char* argv[])
 {
+  BSGTK_UNIQUE_BREAKPOINT();
   bsgtk_prog_args(argc, argv);
+
   auto app = BsGtk_Application::create("truc-gpl.GtkMM-test");
   BSGTK_DEBUG_LOG("main avec app=" << app << " git=" << bsgtk_main_git);
   return app->make_window_and_run<BsGtk_Window>(argc, argv);
