@@ -27,13 +27,28 @@ extern "C" const char bsgtk_main_git[];
 const char bsgtk_main_git[] = SHORT_GITID;
 const char* bsgtk_prog_name=nullptr;
 bool bsgtk_debug;
+int bsgtk_def_width=555;
+int bsgtk_def_height=333;
 
 
 BsGtk_Window::BsGtk_Window()
 {
   set_title("Basic BsGtk gtkmm-basile application");
-  set_default_size(600, 200);
+  set_default_size(bsgtk_def_width, bsgtk_def_height);
 }
+
+static void
+bsgtk_usage(void)
+{
+  std::cout << bsgtk_prog_name << " usage (git " << bsgtk_main_git
+            << ") :" << std::endl;
+  std::cout << "\t --help                         # this help"
+            << std::endl;
+  std::cout << "\t --version                      # version info"
+            << std::endl;
+  std::cout << "\t --debug | -D                   # debug messages"
+            << std::endl;
+} // end bsgtk_usage
 
 static void
 bsgtk_prog_args(int argc, char**argv)
@@ -45,9 +60,18 @@ bsgtk_prog_args(int argc, char**argv)
       char*curarg = argv[aix];
       if (!strcmp(curarg, "--help"))
         {
+          bsgtk_usage();
+          std::cout << " see github.com/bstarynk/truc-gpl/Gtkmm-test/"
+                    << std::endl;
+          exit(EXIT_SUCCESS);
         }
       else if (!strcmp(curarg, "--version"))
         {
+          std::cout << bsgtk_prog_name << " git " << bsgtk_main_git
+                    << std::endl;
+          std::cout << " see github.com/bstarynk/truc-gpl/Gtkmm-test/"
+                    << std::endl;
+          exit(EXIT_SUCCESS);
         }
       else if (!strcmp(curarg, "-D") || !strcmp(curarg, "--debug"))
         {
@@ -61,7 +85,7 @@ main(int argc, char* argv[])
 {
   BSGTK_UNIQUE_BREAKPOINT();
   bsgtk_prog_args(argc, argv);
-
+  BSGTK_UNIQUE_BREAKPOINT();
   auto app = BsGtk_Application::create("truc-gpl.GtkMM-test");
   BSGTK_DEBUG_LOG("main avec app=" << app << " git=" << bsgtk_main_git);
   return app->make_window_and_run<BsGtk_Window>(argc, argv);
