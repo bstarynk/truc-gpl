@@ -51,7 +51,7 @@ bsgtk_usage(void)
 } // end bsgtk_usage
 
 static void
-bsgtk_prog_args(int argc, char**argv)
+bsgtk_prog_args(int& argc, char**argv)
 {
   bsgtk_prog_name = argv[0];
   BSGTK_UNIQUE_BREAKPOINT();
@@ -76,6 +76,14 @@ bsgtk_prog_args(int argc, char**argv)
       else if (!strcmp(curarg, "-D") || !strcmp(curarg, "--debug"))
         {
           bsgtk_debug = true;
+	  std::cout << bsgtk_prog_name << " git " << bsgtk_main_git
+		    << " enable debug (" << __FILE__ << ":" << __LINE__-2
+		    << ")"
+		    << " removing prog.arg#" << aix << std::endl;
+	  argc--;
+	  for (int ix=aix+1; ix<argc; ix++)
+	    argv[ix] = argv[ix+1];
+	  argv[argc] = nullptr;
         }
     }
 } // end bsgtk_prog_args
@@ -86,8 +94,9 @@ main(int argc, char* argv[])
   BSGTK_UNIQUE_BREAKPOINT();
   bsgtk_prog_args(argc, argv);
   BSGTK_UNIQUE_BREAKPOINT();
+  BSGTK_DEBUG_LOG(argv[0] << " main with " << argc << " arguments");
   auto app = BsGtk_Application::create("truc-gpl.GtkMM-test");
-  BSGTK_DEBUG_LOG("main avec app=" << app << " git=" << bsgtk_main_git);
+  BSGTK_DEBUG_LOG("main with app=" << app << " git=" << bsgtk_main_git);
   return app->make_window_and_run<BsGtk_Window>(argc, argv);
 }
 

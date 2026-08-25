@@ -54,16 +54,17 @@ class BsGtk_Application : public Gtk::Application
 };      // end class BsGtk_Application
 
 
-#define BSGTK_DEBUG_LOG_AT(Fname,Line,Log)   do	\
-  {						\
-    if (bsgtk_debug)				\
-      {						\
-        std::ostringstream _logstream_##Line;	\
-        _logstream_##Line << Log << std::flush;	\
-	std::clog << _logstream_##Line.str()	\
-		  << std::endl;			\
-      }						\
-  }						\
+#define BSGTK_DEBUG_LOG_AT(Fname,Line,Log)   do		\
+  {							\
+    if (bsgtk_debug)					\
+      {							\
+        std::ostringstream _logstream_##Line;		\
+        _logstream_##Line << Log << std::flush;		\
+	std::clog << Fname << ":" << Line		\
+		  << "::" << _logstream_##Line.str()	\
+		  << std::endl;				\
+      }							\
+  }							\
 while (0)
 
 #define BSGTK_DEBUG_LOG_AT_BIS(fname, fline, logmsg)  \
