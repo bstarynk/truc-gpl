@@ -25,7 +25,7 @@ export
 
 
 CC= gcc
-PACKAGES= termcap readline
+PACKAGES= tinfo readline
 CFLAGS= -O -g -Wall -Wextra $(shell pkg-config --cflags $(PACKAGES))
 LIBS= $(shell pkg-config --libs $(PACKAGES))
 RM= /bin/rm -vf

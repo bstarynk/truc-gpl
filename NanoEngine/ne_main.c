@@ -21,8 +21,13 @@
 //
 #include <dlfcn.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
+#include <errno.h>
 #include <readline/readline.h>
+#include <assert.h>
+
+
 bool ne_debug;
 char *ne_progname;
 void *ne_selfhandle;
@@ -77,7 +82,7 @@ main (int argc, char **argv)
   ne_progname = argv[0];
   ne_selfhandle = dlopen (NULL, RTLD_NOW);
   if (!ne_selfhandle)
-    NE_FATAL ("failed to dlopen self handle: %s", stderror (errno));
+    NE_FATAL ("failed to dlopen self handle: %s", strerror (errno));
   ne_process_program_arguments (argc, argv);
 
   return status;
