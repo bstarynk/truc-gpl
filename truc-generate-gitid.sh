@@ -28,7 +28,7 @@ license()
 
 usage()
 {
-	echo "usage: ./ne-generate-gitid.sh [-hlsv]"
+	echo "usage: ./truc-generate-gitid.sh [-hlsv]"
 	echo "options:"
 	echo "  -h  show usage"
 	echo "  -l  show license" 
@@ -99,10 +99,10 @@ generate_c()
 {
 	getid
 	isdirty
-	printf 'const char _ne_shortgit[]="%.12s%s";\n'  "${gitid}" "${dirty}"
-	printf 'const char _ne_fullgit[]="%s%s";\n' "${gitid}" "${dirty}"
-	printf 'const char _ne_timestamp[]="%s";\n' "$(date)"
-	printf 'const long _ne_timelong=%d;\n' "$(date +%s)"
+	printf 'const char truc_shortgit[]="%.12s%s";\n'  "${gitid}" "${dirty}"
+	printf 'const char truc_fullgit[]="%s%s";\n' "${gitid}" "${dirty}"
+	printf 'const char truc_timestamp[]="%s";\n' "$(date)"
+	printf 'const long truc_timelong=%d;\n' "$(date +%s)"
 }
 
 main()
