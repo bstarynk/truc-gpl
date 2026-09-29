@@ -5,6 +5,9 @@
 #
 # © Copyright (C) 2020 - 2026, Basile Starynkevitch
 #
+# in RefPerSys there are other contributors, see refpersys.org and
+# github.com/RefPerSys
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -26,14 +29,16 @@ license()
     exit 0
 }
 
+trucgen_prefix="truc"
 usage()
 {
-	echo "usage: ./truc-generate-gitid.sh [-hlsv]"
+	echo "usage: ./truc-generate-gitid.sh [-P prefix] [-hlsv]"
 	echo "options:"
 	echo "  -h  show usage"
 	echo "  -l  show license" 
 	echo "  -s  print short git ID" 
 	echo "  -v  show version"
+	echo "  -P<prefix> use prefix instead of truc in generated C file"
 	echo "  -c  generate c file"
 }
 
@@ -55,13 +60,14 @@ opt()
 {
 	isshort=0
 
-	while getopts "hlsvc" flag ; do
+	while getopts "hlsvcP:" flag ; do
 		case ${flag} in
 			h) usage ; exit 0 ;;
 			l) license ;;
 			s) isshort=1 ;;
 			v) version ;;
 			c) generate_c ; exit 0;;
+			P) trucgen_prefix=$OPTARG ;;
 			*) usage ; exit 1 ;;
 		esac
 	done
@@ -99,10 +105,10 @@ generate_c()
 {
 	getid
 	isdirty
-	printf 'const char truc_shortgit[]="%.12s%s";\n'  "${gitid}" "${dirty}"
-	printf 'const char truc_fullgit[]="%s%s";\n' "${gitid}" "${dirty}"
-	printf 'const char truc_timestamp[]="%s";\n' "$(date)"
-	printf 'const long truc_timelong=%d;\n' "$(date +%s)"
+	printf 'const char %s_shortgit[]="%.12s%s";\n' "${trucgen_prefix}"  "${gitid}" "${dirty}"
+	printf 'const char %s_fullgit[]="%s%s";\n' "${trucgen_prefix}"  "${gitid}" "${dirty}"
+	printf 'const char %s_timestamp[]="%s";\n' "${trucgen_prefix}"  "$(date)"
+	printf 'const long %s_timelong=%d;\n' "${trucgen_prefix}"  "$(date +%s)"
 }
 
 main()
