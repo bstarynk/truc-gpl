@@ -46,6 +46,7 @@ class BsGtk_Window : public Gtk::Window
 {
 public:
   BsGtk_Window();
+  virtual ~BsGtk_Window();
 }; // end class BsGtk_Window
 
 class BsGtk_Application : public Gtk::Application

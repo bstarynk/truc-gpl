@@ -27,15 +27,6 @@ extern "C" const char bsgtk_main_git[];
 const char bsgtk_main_git[] = SHORT_GITID;
 const char* bsgtk_prog_name=nullptr;
 bool bsgtk_debug;
-int bsgtk_def_width=555;
-int bsgtk_def_height=333;
-
-
-BsGtk_Window::BsGtk_Window()
-{
-  set_title("Basic BsGtk gtkmm-basile application");
-  set_default_size(bsgtk_def_width, bsgtk_def_height);
-}
 
 static void
 bsgtk_usage(void)

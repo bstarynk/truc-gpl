@@ -31,7 +31,7 @@ CXX?= g++
 PACKAGES= gtkmm-4.0
 SHORTGITID=$(shell ../truc-generate-gitid.sh -s)
 CFLAGS= -O -g -std=gnu++17 -Wall -Wextra $(shell pkg-config --cflags $(PACKAGES))
-CFLAGS+= -DSHORT_GITID=\"$(SHORTGITID)\"
+GIT_CFLAGS= -DSHORT_GITID=\"$(SHORTGITID)\"
 LIBS= $(shell pkg-config --libs $(PACKAGES))
 
 CXXFILES= $(wildcard [a-z]*.cc)
@@ -47,6 +47,7 @@ clean:
 
 %.o: %.cc gtkmm-basile.hh | GNUmakefile
 	$(CXX) -DBSGTK_BASENAME=\"$(basename $<)\" \
+	   -DSHORT_GITID=\"$(shell ../truc-generate-gitid.sh -s $<)\" \
 	   $(CFLAGS) -c $< -o $@
 
 
