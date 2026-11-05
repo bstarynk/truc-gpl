@@ -33,17 +33,17 @@ int bsgtk_def_width=567;
 int bsgtk_def_height=333;
 
 BsGtk_Window::BsGtk_Window()
-  : Gtk::Window() {
-  BSGTK_DEBUG_LOG("BsGtk_Window constructor @" << (void*)this);
-  set_title("Basic BsGtk gtkmm-basile application");
-  set_default_size(bsgtk_def_width, bsgtk_def_height);
+    : Gtk::Window() {
+    BSGTK_DEBUG_LOG("BsGtk_Window constructor @" << (void*)this);
+    set_title("Basic BsGtk gtkmm-basile application");
+    set_default_size(bsgtk_def_width, bsgtk_def_height);
 #warning incomplete BsGtk_Window constructor
 } // end BsGtk_Window::BsGtk_Window
 
 BsGtk_Window::~BsGtk_Window()
 {
 #warning incomplete BsGtk_Window destructor
-  BSGTK_DEBUG_LOG("BsGtk_Window destructor @" << (void*)this);
+    BSGTK_DEBUG_LOG("BsGtk_Window destructor @" << (void*)this);
 } // end Bsgtk_Window::~BsGtk_Window
 
 /****************

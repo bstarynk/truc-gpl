@@ -1,6 +1,7 @@
 // file GTKmm-test/app.cc
 // SPDX-License-Identifier: GPL-3.0-or-later
 // file github.com/bstarynk/truc-gpl/Gtkmm-test/app.cc
+// copyright 2026 GPL licensed code
 // Author:
 //      Basile STARYNKEVITCH, 92340 Bourg-la-Reine, France,
 //                    <basile@starynkevitch.net>
@@ -32,10 +33,10 @@ const char bsgtk_app_basename[] = BSGTK_BASENAME;
 int
 BsGtk_Application::run(int argc, char**argv)
 {
-  std::clog << __func__ << " argc=" << argc
-            << " from "  << __FILE__ << ":" << __LINE__ << std::endl;
-  int r = Gtk::Application::run(argc, argv);
-  return r;
+    std::clog << __func__ << " argc=" << argc
+              << " from "  << __FILE__ << ":" << __LINE__ << std::endl;
+    int r = Gtk::Application::run(argc, argv);
+    return r;
 } // end BsGtk_Application::run
 
 

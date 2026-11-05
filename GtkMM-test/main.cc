@@ -1,5 +1,6 @@
 // file GTKmm-test/main.cc
 // SPDX-License-Identifier: GPL-3.0-or-later
+// copyright 2026 GPL licensed code
 // file github.com/bstarynk/truc-gpl/Gtkmm-test/GNUmakefile
 // Author:
 //      Basile STARYNKEVITCH, 92340 Bourg-la-Reine, France,
