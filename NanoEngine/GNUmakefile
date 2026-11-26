@@ -29,8 +29,7 @@ PACKAGES= tinfo readline
 CFLAGS= -O -g -Wall -Wextra $(shell pkg-config --cflags $(PACKAGES))
 LIBS= $(shell pkg-config --libs $(PACKAGES))
 RM= /bin/rm -vf
-# see carburetta.com
-CARBURETTA?= carburetta
+#### see carburetta.com
 NE_GIT_ID:= $(shell ./ne-generate-gitid.sh)
 NE_SHORTGIT_ID:= $(shell ./ne-generate-gitid.sh -s)
 NE_HOST := $(shell /bin/hostname -f)
@@ -40,7 +39,7 @@ NE_ATSHARP := $(shell printf '@#')
 NE_HOMETMP := $(shell echo '$$HOME/tmp')
 HUMAN_SOURCES= $(wildcard ne_*.c)
 HUMAN_HEADERS= $(wildcard ne_*.h)
-GENERATED_SOURCES= $(sort $(wildcard _*.c) _ne_parscarb.c)
+GENERATED_SOURCES= $(sort $(wildcard _*.c))
 PLUGIN_SOURCES= $(wildcard plugins/*.c)
 PLUGIN_TEMPORARY_SOURCES= $(wildcard plugins/_*.c)
 PLUGIN_SHARED_OBJECTS=  $(patsubst %.c,plugins/%.so, $(PLUGIN_SOURCES) $(PLUGIN_TEMPORARY_SOURCES))
@@ -50,15 +49,15 @@ ALL_OBJECTS= $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
 
 .PHONY: all clean plugins
 
-all: _gitid.c _ne_parscarb.c nanoeng
+all: _gitid.c  nanoeng
 
 plugins: $(PLUGIN_SHARED_OBJECTS)
 
 _gitid.c: ne-generate-gitid.sh | GNUmakefile
 	./ne-generate-gitid.sh -c > $@
 
-_ne_parscarb.c: ne_parscarb.cbrt | GNUmakefile
-	$(CARBURETTA)  $< -n -c > $@
+#_ne_parscarb.c: ne_parscarb.cbrt | GNUmakefile
+#	$(CARBURETTA)  $< -n -c > $@
 
 nanoeng: GNUmakefile
 	$(MAKE) $(GENERATED_SOURCES)
