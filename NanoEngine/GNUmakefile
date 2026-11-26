@@ -42,15 +42,17 @@ HUMAN_SOURCES= $(wildcard ne_*.c)
 HUMAN_HEADERS= $(wildcard ne_*.h)
 GENERATED_SOURCES= $(sort $(wildcard _*.c) _ne_parscarb.c)
 PLUGIN_SOURCES= $(wildcard plugins/*.c)
-PLUGIN_SHARED_OBJECTS=  $(patsubst %.c,plugins/%.so, $(PLUGIN_SOURCES))
-
+PLUGIN_TEMPORARY_SOURCES= $(wildcard plugins/_*.c)
+PLUGIN_SHARED_OBJECTS=  $(patsubst %.c,plugins/%.so, $(PLUGIN_SOURCES) $(PLUGIN_TEMPORARY_SOURCES))
 HUMAN_OBJECTS=  $(patsubst %.c,obj/%.o, $(HUMAN_SOURCES))
 GENERATED_OBJECTS= $(patsubst %.c,obj/%.o, $(GENERATED_SOURCES))
 ALL_OBJECTS= $(HUMAN_OBJECTS) $(GENERATED_OBJECTS)
 
-.PHONY: all clean
+.PHONY: all clean plugins
 
 all: _gitid.c _ne_parscarb.c nanoeng
+
+plugins: $(PLUGIN_SHARED_OBJECTS)
 
 _gitid.c: ne-generate-gitid.sh | GNUmakefile
 	./ne-generate-gitid.sh -c > $@
@@ -79,6 +81,7 @@ clean:
 	@echo GENERATED_SOURCES: $(GENERATED_SOURCES)
 	@echo HUMAN_OBJECTS: $(HUMAN_OBJECTS)
 	@echo GENERATED_OBJECTS: $(GENERATED_OBJECTS)
+	$(RM) $(GENERATED_SOURCES)
 	$(RM) $(HUMAN_OBJECTS) $(GENERATED_OBJECTS) nanoeng
 	$(RM) plugins/*.so
 	$(RM) core*
